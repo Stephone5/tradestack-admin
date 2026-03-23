@@ -34,7 +34,7 @@ const BACKLOG = [
 
 const STANDUPS = [
   { date:"Mar 22 · Today", agents:[
-    {name:"Research",emoji:"🔍",s:"green",update:"Completed competitor refresh for 3 users. Flagged new competitor: Apex Mechanical (opened Nov 2025).",blocker:null},
+    {name:"Research",emoji:"🔍",s:"green",update:"Completed competitor Refresh for 3 users. Flagged new competitor: Apex Mechanical (opened Nov 2025).",blocker:null},
     {name:"Analytics",emoji:"📊",s:"green",update:"7 active users this week, 2 new signups. Avg session 8.2min. Competitor tab has 3× more views than Financial tab.",blocker:null},
     {name:"Outreach",emoji:"📣",s:"amber",update:"4 emails drafted and queued for owner approval. 0 sent — awaiting review.",blocker:"Approval queue has 4 items pending 3+ days."},
     {name:"Product",emoji:"🔧",s:"green",update:"Triaged 6 feedback items. 2 escalated to backlog. 4 resolved as FAQ updates.",blocker:null},
@@ -127,7 +127,7 @@ body{background:#0d0d0d;}
 
 /* STATS GRID — 2 col mobile, 4 col desktop */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;}
+#g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;}
 .g4{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
 @media(min-width:600px){.g4{grid-template-columns:repeat(4,1fr);}}
 
@@ -203,7 +203,7 @@ body{background:#0d0d0d;}
 .rh-g{color:#4ade80;}.rh-a{color:#e07b39;}.rh-b{color:#60a5fa;}
 .ritem{display:flex;align-items:flex-start;gap:.45rem;font-size:.7rem;color:#888;line-height:1.5;padding:.35rem 0;border-bottom:1px solid #161616;}
 .ritem:last-child{border-bottom:none;}
-.ritem::before{content:'→';color:#333;flex-shrink:0;}
+.ritem::before{content:'→+;color:#333;flex-shrink:0;}
 
 /* AI */
 .ai-in{width:100%;background:#0f0f0f;border:1px solid #1c1c1c;color:#ddd8ce;padding:.65rem .8rem;font-family:'Inconsolata',monospace;font-size:.8rem;outline:none;border-radius:3px;transition:border-color .15s;resize:vertical;min-height:80px;}
@@ -236,106 +236,106 @@ const NAV = [
   {id:"overview",icon:"⬛",label:"Overview"},
   {id:"standup",icon:"☀️",label:"Daily Standup",count:2},
   {id:"board",icon:"📋",label:"Sprint Board"},
-  {id:"review",icon:"✅",label:"Review Queue",count:5},
-  {id:"planning",icon:"🗓️",label:"Sprint Planning"},
-  {id:"retro",icon:"🔄",label:"Retrospective"},
-  {id:"backlog",icon:"📦",label:"Product Backlog"},
-  {id:"flow",icon:"♻️",label:"Agent Loop"},
-  {id:"ai",icon:"🤖",label:"AI Assistant"},
-];
+  {id:"review",icon"��!H�X�[���]�Y]�]Y]YH���[��_K��Y��[��[�ȋX�ێ��'����#ȋX�[����[�[��[�ȟK��Y���]�ȋX�ێ��'�!�X�[���]���X�]�H�K��Y���X���ȋX�ێ��'�鈋X�[����X��X���ȟK��Y����ȋX�ێ���n��#ȋX�[��Y�[����K��Y��ZH�X�ێ��'�%��X�[��RH\��\�[��K�N�^ܝY�][�[��[ۈ\
 
-export default function App() {
-  const [view,setView]         = useState("overview");
-  const [menuOpen,setMenuOpen] = useState(false);
-  const [backlog,setBacklog]   = useState(BACKLOG);
-  const [rstates,setRstates]   = useState({});
-  const [selected,setSelected] = useState([]);
-  const [sdDay,setSdDay]       = useState(0);
-  const [aiIn,setAiIn]         = useState("");
-  const [aiOut,setAiOut]       = useState("");
-  const [aiRun,setAiRun]       = useState(false);
+H�ۜ�ݚY]��]�Y]�HH\�T�]J�ݙ\��Y]ȊN�ۜ��Y[�S�[��]Y[�S�[�HH\�T�]J�[�JN�ۜ�ؘX�����]�X����HH\�T�]J�P����N�ۜ�ܜ�]\��]��]\�HH\�T�]J�JN�ۜ���[X�Y�]�[X�YHH\�T�]J�JN�ۜ���^K�]�^WHH\�T�]J
+N�ۜ��ZR[��]ZR[�HH\�T�]J��N�ۜ��ZS�]�]ZS�]HH\�T�]J��N�ۜ��ZT�[��]ZT�[�HH\�T�]J�[�JN��ۜ��]�Y�]HH
+Y
+HO���]�Y]�Y
+N��]Y[�S�[��[�JN�N�ۜ���[�][\�H�X���˙�[\��O�����[�OOLJN�ۜ�ۙT�H��[�][\˙�[\��O����]\�OOH�ۙH�K��YX�J
+K�OO�J؋��
+N�ۜ��[�H��[�][\˜�YX�J
+K�OO�J؋��
+N�ۜ��HX]���[�
 
-  const navigate = (id) => { setView(id); setMenuOpen(false); };
-  const sprintItems = backlog.filter(b=>b.sprint===1);
-  const donePts     = sprintItems.filter(b=>b.status==="Done").reduce((a,b)=>a+b.pts,0);
-  const totalPts    = sprintItems.reduce((a,b)=>a+b.pts,0);
-  const pct         = Math.round((SPRINT.dayElapsed/SPRINT.dayTotal)*100);
-  const pendingRev  = REVIEW_ITEMS.filter(r=>!rstates[r.id]||rstates[r.id]==="Pending").length;
-  const blockers    = STANDUPS[0].agents.filter(a=>a.blocker);
+��S��^Q[\�Y���S��^U�[
+J�L
+N�ۜ�[�[�ԙ]�H�U�QU��UST˙�[\��O�\��]\�܋�Y_��]\�܋�YOOOH�[�[�ȊK�[���ۜ�����\��H�S�T��K�Y�[�˙�[\�OO�K�����\�N��ۜ����T�[HYO��]�[X�Y
+�O�˚[��Y\�Y
+O�˙�[\�O�OOZY
+N�ˋ���YJN�ۜ���[Z]��[�H
 
-  const toggleSel = id => setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
-  const commitSprint = () => { setBacklog(bl=>bl.map(b=>selected.includes(b.id)?{...b,sprint:2,status:"In Progress"}:b)); setSelected([]); };
+HO���]�X�����O���X\
+�O��[X�Y�[��Y\���Y
+O�ˋ�����[����]\Έ�[���ܙ\�ȟN��JN��]�[X�Y
+�JN�N��ۜ��[�RHH\�[��
 
-  const runAI = async () => {
-    setAiRun(true); setAiOut("");
-    const sys = `You are the AI Scrum assistant for TradeStack. Sprint ${SPRINT.num}, Day ${SPRINT.dayElapsed}/${SPRINT.dayTotal}. ${SPRINT.dayTotal-SPRINT.dayElapsed} days left. Velocity: ${donePts}/${totalPts} pts. ${pendingRev} items pending review. ${blockers.length} active blockers. Be direct and tactical.`;
-    const out = await callClaude(sys, aiIn);
-    setAiOut(out); setAiRun(false);
-  };
+HO��]ZT�[��YJN��]ZS�]
+��N�ۜ��\�H[�H\�HHRH�ܝ[H\��\�[��܈�YT�X�ˈ��[�	���S���[_K^H	���S��^Q[\�YK����S��^U�[K�	���S��^U�[T��S��^Q[\�YH^\�Y���[��]N�	�ۙT�K���[�Hˈ	�[�[�ԙ]�H][\�[�[���]�Y]ˈ	؛���\�˛[��HX�]�H����\�ˈ�H\�X�[�X�X�[��ۜ��]H]�Z]�[�]YJ�\�ZR[�N�]ZS�]
+�]
+N��]ZT�[��[�JNN��ۜ����ӓ�T�H�N��'�∋���[�[]X�ȋX���Y_K�\���Έ�����K�N��'�#H�����\�X\���X���Y_K�\���Έ�����K��N��'��ȋ����]�XX��K�\���Έ�����K�N��'��H����[�H
+�JH��ێ��Y_K�\���Έ�����K��N��'�)ȋ�����X��K�\���Έ�����K�N��'��ȋ����\ܝ�K�\���Έ���H�K��N���g��#ȋ�����]Y�H�K�\���Έ�����K�N��'������[�[��H�K�N��]\��
+����[O�����O��[O��]��\�Ә[YOH�\�����ʈ��T�
+��B�]��\�Ә[YOH��\�����]ۈ�\�Ә[YOH��]�]���H�ې�X��^�
+OO��]Y[�S�[�[Y[�S�[�_O��,؝]ۏ��]��\�Ә[YOH���ȏ��YO���X��؏��[��[O^����܎���
 
-  const FLOW_NODES = [
-    {e:"📊",n:"Analytics",act:true},{arrow:"→"},{e:"🔍",n:"Research",act:true},{arrow:"→"},
-    {e:"📣",n:"Outreach"},{arrow:"→"},{e:"🧑",n:"You (SM)",own:true},{arrow:"→"},
-    {e:"🔧",n:"Product"},{arrow:"→"},{e:"🛟",n:"Support"},{arrow:"↩"},
-    {e:"♟️",n:"Strategy"},{arrow:"→"},{e:"💰",n:"Finance"},
-  ];
+��۝�^�N�����[H��۝�ZY���_O��YZ[���[���]���]��\�Ә[YOH�ؘY�H��]��\�Ә[YOH����ϔ����S���[_H0��^H���S��^Q[\�YK����S��^U�[O�]����]�����ʈՑT�VH
+��B�]��\�Ә[YO^�ݙ\�^H	�Y[�S�[�Ȝ��Ȏ���XHې�X��^�
+OO��]Y[�S�[��[�J_Kς��]��\�Ә[YOH�^[�]�����ʈ�QP�T�
+��B�]��\�Ә[YO^��YX�\�	�Y[�S�[�ț�[�����XO��]��\�Ә[YOH�ۛ����ܝ[H]�[���]���ӐU��X\
+�O���]ۈ�^O^ۋ�YH�\�Ә[YO^�ۘ��	ݚY]�OO[��Yțۈ����XHې�X��^�
+OO��]�Y�]J��Y
+_O���[��\�Ә[YOH�ۘ�H��ۋ�X�۟O��[����[��\�Ә[YOH�ۘ���ۋ�X�[O��[���ۋ���[��	���[��\�Ә[YOH�ۘ۝��ۋ���[�O��[��B�؝]ۏ��
+J_B��]�����ʈPRS�
+��B�]��\�Ә[YOH�XZ[������ʈՑT��QU�
+��B�ݚY]�OOH�ݙ\��Y]ȉ����]��\�Ә[YOH����]��\�Ә[YOH������[����S���[_Hݙ\��Y]��]��]��\�Ә[YOH���Ϗ�]���]��\�Ә[YOH��ȏ����S���\�H8������S��[�H0��[�H\�H�ܝ[HX\�\��]����]��\�Ә[YOH����[O^��X\��[����N��\�[H�_O���ݎ��ȋ��X�]�H\�\�ȋ��̈\��YZȋ\��Y_K�ݎ�	�ۙT�K���[�X���ܞH�[�ȋ�	���[�][\˙�[\��O����]\�OOH�ۙH�K�[��K����[�][\˛[��HX��]�\��[K�ݎ���[��[�[�ԙ]�K��]�Z][���]�Y]ȋ���YY[�\�X�\�[ۈ�\��[�_K�ݎ���[���X���˙�[\��O�X����[�
+K�[��
+K���X����][\ȋ����[���XYH�\��[K�K�X\
 
-  return (
-    <>
-      <style>{CSS}</style>
-      <div className="app">
+�JOO��]��^O^�_H�\�Ә[YOH��\����]��\�Ә[YOH��]]����˝�O�]���]��\�Ә[YOH��][���˛O�]���]��\�Ә[YO^��]Y	�˝\OO]�YOș\��˝\OOY�[�Oș������XO��˙O�]����]���
+J_B��]����]��\�Ә[YOH��\���[O^��X\��[����N��\�[H�_O��]��[O^��\�^N���^��\�Y�P�۝[����X�KX�]�Y[��[Yے][\Έ��[�\��X\��[����N����[H�_O���[��[O^�ٛ۝�[Z[N���\��]����[��\�\�Y���۝�ZY����۝�^�N���̜�[H���܎����_O���[���ܙ\����[���  <span style={{fontSize:".65rem",color:"#e07b39"}}>{pct}% elapsed · {Math.round((donePts/totalPts)*100)}% done</span>
+                </div>
+                <div className="sbar-wrap"><div className="sbar-fill" style={{width:`${pct}%`}}/></div>
+                <div className="tick-row">
+                  {sprintItems.map(t=>(
+                    <div key={t.id} className="tick" style={{background:t.status==="Done"?"#4ade80":t.status==="In Progress"?"#e07b39":"#2a2a2a"}} title={t.title}/>
+                  ))}
+                </div>
+              </div>
 
-        {/* TOP BAR */}
-        <div className="bar">
-          <button className="nav-toggle" onClick={()=>setMenuOpen(!menuOpen)}>☰</button>
-          <div className="logo">Trade<b>Stack</b> <span style={{color:"#444",fontSize:".6rem",fontWeight:300}}>/ Admin</span></div>
-          <div className="sbadge"><div className="sdot"/>S{SPRINT.num} · Day {SPRINT.dayElapsed}/{SPRINT.dayTotal}</div>
-        </div>
+              <div className="g2">
+                <div className="card">
+                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Today's Blockers</div>
+                  {blockers.length===0
+                    ? <div style={{color:"#4ade80",fontSize:".7rem"}}>✓ No blockers</div>
+                    : blockers.map((a,i)=><div key={i} className="blk-item">🚧 <strong style={{color:"#f87171"}}>{a.name}:</strong> {a.blocker}</div>)}
+                </div>
+                <div className="card">
+                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Sprint Goals</div>
+                  {sprintItems.map(t=>(
+                    <div key={t.id} style={{display:"flex",alignItems:"flex-start",gap:".45rem",marginBottom:".35rem"}}>
+                      <span style={{fontSize:".7rem",flexShrink:0}}>{t.status==="Done"?"✅":t.status==="In Progress"?"🔄":"⬜"}</span>
+                      <span style={{fontSize:".7rem",color:t.status==="Done"?"#4ade80":"#888",lineHeight:1.4}}>{t.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>}
 
-        {/* OVERLAY */}
-        <div className={`overlay ${menuOpen?"show":""}`} onClick={()=>setMenuOpen(false)}/>
-
-        <div className="layout">
-
-          {/* SIDEBAR */}
-          <div className={`sidebar ${menuOpen?"open":""}`}>
-            <div className="snlbl">Scrum Events</div>
-            {NAV.map(n=>(
-              <button key={n.id} className={`snbtn ${view===n.id?"on":""}`} onClick={()=>navigate(n.id)}>
-                <span className="snbi">{n.icon}</span>
-                <span className="snbl">{n.label}</span>
-                {n.count>0&&<span className="sncnt">{n.count}</span>}
-              </button>
-            ))}
-          </div>
-
-          {/* MAIN */}
-          <div className="main">
-
-            {/* OVERVIEW */}
-            {view==="overview"&&<>
-              <div className="sh"><div className="st">Sprint {SPRINT.num} Overview</div><div className="sl"/></div>
-              <div className="ss">{SPRINT.start} → {SPRINT.end} · You are Scrum Master</div>
-
-              <div className="g4" style={{marginBottom:"1rem"}}>
-                {[
-                  {v:"7",l:"Active Users",d:"+2 this week",up:true},
-                  {v:`${donePts}/${totalPts}`,l:"Story Points",d:`${sprintItems.filter(b=>b.status==="Done").length}/${sprintItems.length} tickets`,up:null},
-                  {v:String(pendingRev),l:"Awaiting Review",d:"Need your decision",up:false},
-                  {v:String(backlog.filter(b=>!b.sprint).length),l:"Backlog Items",d:"Sprint 2 ready",up:null},
-                ].map((s,i)=>(
-                  <div key={i} className="card">
-                    <div className="stat-v">{s.v}</div>
-                    <div className="stat-l">{s.l}</div>
-                    <div className={`stat-d ${s.up===true?"dup":s.up===false?"ddn":"dfl"}`}>{s.d}</div>
+            {/* STANDUP */}
+            {view==="standup"&&<>
+              <div className="sh"><div className="st">Daily Standup</div><div className="sl"/></div>
+              <div className="ss">Each agent reports: what they did, doing, and what's blocking them</div>
+              <div className="sdup-tabs">
+                {STANDUPS.map((s,i)=><button key={i} className={`sdup-tab ${sdDay===i?"on":""}`} onClick={()=>setSdDay(i)}>{s.date}</button>)}
+              </div>
+              <div className="card">
+                {STANDUPS[sdDay].agents.map((a,i)=>(
+                  <div key={i} className="sr">
+                    <div className={`si ${a.s==="green"?"sig":a.s==="amber"?"sia":"sir"}`}/>
+                    <div className="sava">{a.emoji}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div className="san">{a.name} Agent</div>
+                      <div className="sau">{a.update}</div>
+                      {a.blocker&&<div className="sblk">🚧 {a.blocker}</div>}
+                    </div>
                   </div>
                 ))}
               </div>
+            </>}
 
-              <div className="card" style={{marginBottom:"1rem"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:".4rem"}}>
-                  <span style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888"}}>Sprint Progress</span>
-                  �7�7G��S׷�f��E6��S�"�cW&V�"�6���#�"6Sv#3�'���7G�RV�6VB+r��F��&�V�B��F��UG2�F�F�G2����RF��S��7����F�c��F�b6�74��S�'6&"�w&#��F�b6�74��S�'6&"�f���"7G��S׷�v�GF��G�7G�V������F�c��F�b6�74��S�'F�6��&�r#��7&��D�FV�2���C�•�F�b�W�׷B�G�6�74��S�'F�6�"7G��S׷�&6�w&�V�C�B�7FGW3���$F��R#�"3FFS�#�B�7FGW3���$��&�w&W72#�"6Sv#3�#�"3&&&'��F�F�S׷B�F�F�W�����Т��F�c���F�cࠢ�F�b6�74��S�&s"#��F�b6�74��S�&6&B#��F�b7G��S׷�f��Df֖Ǔ�"t&6��f�r�6�2�6W&�b"�f��EvV�v�C�s�f��E6��S�"�s'&V�"�6���#�"3���"��&v��&�GF�Ӣ"�cW&V�'���F�F�w2&��6�W'3��F�c��&��6�W'2��V�wF���� ���F�b7G��S׷�6���#�"3FFS�"�f��E6��S�"�w&V�'���)�2��&��6�W'3��F�c��&��6�W'2����ƒ����F�b�W�׶��6�74��S�&&Ʋ֗FV�#�	��r�7G&��r7G��S׷�6���#�"6c�ss'������Wӣ��7G&��s���&��6�W'���F�c�Т��F�c��F�b6�74��S�&6&B#��F�b7G��S׷�f��Df֖Ǔ�"t&6��f�r�6�2�6W&�b"�f��EvV�v�C�s�f��E6��S�"�s'&V�"�6���#�"3���"��&v��&�GF�Ӣ"�cW&V�'���7&��Bv��3��F�c��7&��D�FV�2���C�•�F�b�W�׷B�G�7G��S׷�F�7���&f�W�"�Ɩv�FV�3�&f�W��7F'B"�v�"�CW&V�"��&v��&�GF�Ӣ"�3W&V�'����7�7G��S׷�f��E6��S�"�w&V�"�f�W�6�&�泣���B�7FGW3���$F��R#�.)�R#�B�7FGW3���$��&�w&W72#�/	�HB#�.*��'���7���7�7G��S׷�f��E6��S�"�w&V�"�6���#�B�7FGW3���$F��R#�"3FFS�#�"3���"�Ɩ�T�V�v�C��G���B�F�F�W���7����F�c���Т��F�c���F�c����Р���5D�EU��Т�f�Ws���'7F�GW"bc���F�b6�74��S�'6�#��F�b6�74��S�'7B#�F�ǒ7F�GW��F�c��F�b6�74��S�'6�"����F�c��F�b6�74��S�'72#�V6�vV�B&W�'G3�v�BF�W�F�B�F���r��Bv�Bw2&��6���rF�V���F�c��F�b6�74��S�'6GW�F'2#��5D�EU2����2ƒ����'WGF���W�׶��6�74��S׶7GW�F"G�6DF���֓�&��#�"'����6Ɩ6�ײ����6WE6DF������2�FFW���'WGF���Т��F�c��F�b6�74��S�&6&B#��5D�EU5�6DF���vV�G2����ƒ��•�F�b�W�׶��6�74��S�'7"#��F�b6�74��S׶6�G��3���&w&VV�#�'6�r#��3���&�&W"#�'6�#�'6�"'�����F�b6�74��S�'6f#��V�������F�c��F�b7G��S׷�f�W���֖�v�GF������F�b6�74��S�'6�#����W�vV�C��F�c��F�b6�74��S�'6R#��WFFW���F�c���&��6�W"bc�F�b6�74��S�'6&Ʋ#�	��r��&��6�W'���F�c�Т��F�c���F�c���Т��F�c����Р���$�$B��Т     {view==="board"&&<>
+            {/* BOARD */}
+            {view==="board"&&<>
               <div className="sh"><div className="st">Sprint Board</div><div className="sl"/></div>
               <div className="ss">Sprint {SPRINT.num} — scroll right to see all columns</div>
               <div className="board-wrap">
