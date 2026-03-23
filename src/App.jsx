@@ -353,7 +353,7 @@ export default function App() {
                     : blockers.map((a,i)=><div key={i} className="blk-item">[*] <strong style={{color:"#f87171"}}>{a.name}:</strong> {a.blocker}</div>)}
                 </div>
                 <div className="card">
-                  <div style={{fontFamily:"'Archivo',sans-serif;font-weight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Sprint Goals</div>
+                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Sprint Goals</div>
                   {sprintItems.map(t=>(
                     <div key={t.id} style={{display:"flex",alignItems:"flex-start",gap:".45rem",marginBottom:".35rem"}}>
                       <span style={{fontSize:".7rem",flexShrink:0}}>{t.status==="Done"?"ok":t.status==="In Progress"?"[*]":"[*]"}</span>
@@ -535,7 +535,7 @@ export default function App() {
               <div className="sh"><div className="st">AI Scrum Assistant</div><div className="sl"/></div>
               <div className="ss">Ask anything about sprint health, priorities, or process. You are Scrum Master - this is your advisor.</div>
               <div className="card" style={{marginBottom:".75rem"}}>
-                <div style={{fontFamily:"t'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".5rem"}}>Sprint Context (auto-loaded)</div>
+                <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".5rem"}}>Sprint Context (auto-loaded)</div>
                 <div style={{fontSize:".68rem",color:"#555",lineHeight:1.8}}>
                   Sprint {SPRINT.num} . Day {SPRINT.dayElapsed}/{SPRINT.dayTotal} . {SPRINT.dayTotal-SPRINT.dayElapsed}d left<br/>
                   Velocity: {donePts}/{totalPts} pts . {sprintItems.filter(b=>b.status==="Done").length}/{sprintItems.length} tickets done<br/>
