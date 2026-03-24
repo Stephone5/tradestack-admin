@@ -91,11 +91,11 @@ MAKING CHANGES — use this exact format:
 You can include multiple EDIT blocks in one reply if changing both repos.
 
 RULES:
-- Always output COMPLETE file content inside EDIT blocks — always the full file, never partial code
+- Always output COMPLETE file content inside EDIT blocks — never partial code
 - Be concise in prose: 2-3 sentences before your code
 - If you need to see a file first, request it, wait, then provide the EDIT
 - Vercel auto-deploys ~10 seconds after a GitHub push
-- Both repos are single-file React apps  all code in src/App.jsx)
+- Both repos are single-file React apps (all code in src/App.jsx)
 
 KNOWN ISSUES TO FIX (when asked):
 - Emoji encoding corruption — shows as "A??" or hieroglyphics in UI
@@ -237,7 +237,51 @@ body{background:#0d0d0d;}
 .ticket{background:#141414;border:1px solid #202020;border-radius:3px;padding:.6rem;margin-bottom:.45rem;}
 .t-id{font-size:.56rem;color:#444;margin-bottom:.15rem;}
 .t-title{font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;color:#ccc;line-height:1.3;margin-bottom:.35rem;}
-.t-meta{display:flex;gap:.25rem;flex-wrnk:0;}
+.t-meta{display:flex;gap:.25rem;flex-wrap:wrap;}
+.t-src{font-size:.58rem;color:#444;margin-top:.25rem;}
+
+/* STANDUP */
+.sdup-tabs{display:flex;gap:.4rem;margin-bottom:.9rem;overflow-x:auto;}
+.sdup-tab{padding:.3rem .7rem;background:#1a1a1a;color:#666;border:1px solid #2a2a2a;border-radius:2px;cursor:pointer;font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
+.sdup-tab.on{background:#e07b39;color:#0d0d0d;border-color:#e07b39;}
+.sr{display:flex;align-items:flex-start;gap:.65rem;padding:.7rem 0;border-bottom:1px solid #161616;}
+.sr:last-child{border-bottom:none;}
+.si{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.sig{background:#4ade80;}.sia{background:#e07b39;animation:pulse 2s infinite;}.sir{background:#f87171;}
+.sava{width:30px;height:30px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.san{font-family:'Archivo',sans-serif;font-weight:700;font-size:.75rem;color:#ccc;}
+.sau{font-size:.7rem;color:#888;line-height:1.5;margin-top:.12rem;}
+.sblk{margin-top:.35rem;background:#1a0a0a;border-left:2px solid #7f1d1d;padding:.35rem .55rem;font-size:.68rem;color:#f87171;line-height:1.45;}
+
+/* REVIEW */
+.ri{background:#111;border:1px solid #1c1c1c;border-radius:3px;padding:.9rem;margin-bottom:.65rem;}
+.ri-hdr{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:.55rem;}
+.ri-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.82rem;color:#ddd8ce;}
+.ri-meta{display:flex;gap:.35rem;align-items:center;margin-top:.18rem;flex-wrap:wrap;}
+.ri-pre{font-size:.7rem;color:#777;line-height:1.6;white-space:pre-wrap;background:#0d0d0d;border:1px solid #191919;padding:.65rem;border-radius:3px;margin-bottom:.65rem;max-height:130px;overflow-y:auto;}
+.ri-acts{display:flex;gap:.45rem;flex-wrap:wrap;}
+.bapp{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#0a1e10;color:#4ade80;border:1px solid #1a3a20;padding:.38rem .75rem;cursor:pointer;border-radius:2px;-webkit-tap-highlight-color:transparent;}
+.brej{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#1e0a0a;color:#f87171;border:1px solid #3a1a1a;padding:.38rem .75rem;cursor:pointer;border-radius:2px;}
+.bedt{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#1a1a1a;color:#888;border:1px solid #2a2a2a;padding:.38rem .75rem;cursor:pointer;border-radius:2px;}
+
+/* PLANNING */
+.pi{display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;background:#111;border:1px solid #1c1c1c;border-radius:3px;margin-bottom:.4rem;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.pi.sel{border-color:#e07b39;background:#1a1200;}
+.pichk{width:16px;height:16px;border-radius:2px;border:1px solid #2a2a2a;background:#1a1a1a;display:flex;align-items:center;justify-content:font-size:.62rem;flex-shrink:0;}
+.pi.sel .pichk{background:#e07b39;border-color:#e07b39;color:#000;}
+.pi-id{font-size:.58rem;color:#444;width:44px;flex-shrink:0;}
+.pi-title{font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;color:#ccc;flex:1;min-width:0;}
+.pi-pts{font-size:.65rem;color:#555;flex-shrink:0;}
+
+/* RETRO */
+.retro-grid{display:grid;grid-template-columns:1fr;gap:.75rem;}
+@media(min-width:600px){.retro-grid{grid-template-columns:repeat(3,1fr);}}
+.rcol{background:#0f0f0f;border:1px solid #1c1c1c;border-radius:3px;padding:.9rem;}
+.rcol-h{font-family:'Archivo',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.65rem;}
+.rh-g{color:#4ade80;}.rh-a{color:#e07b39;}.rh-b{color:#60a5fa;}
+.ritem{display:flex;align-items:flex-start;gap:.45rem;font-size:.7rem;color:#888;line-height:1.5;padding:.35rem 0;border-bottom:1px solid #161616;}
+.ritem:last-child{border-bottom:none;}
+.ritem::before{content:'→';color:#333;flex-shrink:0;}
 
 /* BLOCKERS */
 .blk-item{background:#1a0a0a;border-left:2px solid #7f1d1d;padding:.5rem .7rem;font-size:.7rem;color:#f87171;line-height:1.5;margin-bottom:.4rem;border-radius:0 3px 3px 0;}
@@ -508,108 +552,6 @@ export default function App() {
         <div className="layout">
 
           {/* SIDEBAR */}
-          <div className={`sidebar ${me REVIEW_ITEMS.filter(r=>!rstates[r.id]||rstates[r.id]==="Pending").length;
-  const blockers    = STANDUPS[0].agents.filter(a=>a.blocker);
-
-  const toggleSel    = id => setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
-  const commitSprint = () => { setBacklog(bl=>bl.map(b=>selected.includes(b.id)?{...b,sprint:2,status:"In Progress"}:b)); setSelected([]); };
-
-  const toggleAgent = id => setAgents(a=>a.map(ag=>ag.id===id?{...ag,active:!ag.active}:ag));
-  const updateAgent = (id,field,val) => setAgents(a=>a.map(ag=>ag.id===id?{...ag,[field]:val}:ag));
-  const deleteAgent = id => setAgents(a=>a.filter(ag=>ag.id!==id));
-  const addAgent    = () => {
-    const id = "agent-"+Date.now();
-    setAgents(a=>[...a,{id,name:"New Agent",emoji:"🤖",active:true,desc:"Describe what this agent does"}]);
-  };
-  const updateFeed = (list,setList,i,val) => setList(l=>l.map((x,j)=>j===i?val:x));
-  const deleteFeed = (list,setList,i)     => setList(l=>l.filter((_,j)=>j!==i));
-  const addFeed    = (setList)            => setList(l=>[...l,"New connection → destination"]);
-
-  // ── AI SEND ───────────────────────────────────────────────────────────────
-  const sendMessage = async () => {
-    if (!aiInput.trim() || aiRun) return;
-    const userText = aiInput.trim();
-    setAiInput("");
-    setAiRun(true);
-
-    const newUserMsg = { role:"user", content:userText };
-    const history = [...aiMessages, newUserMsg];
-    setAiMessages(history);
-
-    // Build API messages from history
-    const apiMsgs = history.map(m => ({ role:m.role, content:m.content }));
-
-    try {
-      let response = await callClaude(AI_SYS, apiMsgs);
-      let workingApiMsgs = [...apiMsgs, { role:"assistant", content:response }];
-
-      // Handle FILE_REQUEST lines
-      const fileReqs = parseFileRequests(response);
-      if (fileReqs.length > 0) {
-        const parts = [];
-        for (const req of fileReqs) {
-          try {
-            const content = await ghRead(req.repo, req.path);
-            parts.push(`\n\nFile: ${req.repo}/${req.path}\n\`\`\`jsx\n${content}\n\`\`\``);
-          } catch(e) {
-            parts.push(`\n\n[Could not read ${req.repo}/${req.path}: ${e.message}]`);
-          }
-        }
-        const fileMsg = `Here are the files you requested:${parts.join("")}\n\nNow please provide your changes.`;
-        workingApiMsgs = [...workingApiMsgs, { role:"user", content:fileMsg }];
-        response = await callClaude(AI_SYS, workingApiMsgs);
-      }
-
-      const edits   = parseEdits(response);
-      const display = stripEdits(response);
-
-      setAiMessages(prev => [...prev, {
-        role:"assistant",
-        content:response,
-        display,
-        edits,
-      }]);
-    } catch(e) {
-      setAiMessages(prev => [...prev, {
-        role:"assistant",
-        content:`Error: ${e.message}`,
-        display:`Error: ${e.message}`,
-        edits:[],
-      }]);
-    }
-    setAiRun(false);
-  };
-
-  const applyEdit = async (edit, key) => {
-    setEditStatus(s=>({...s,[key]:"applying"}));
-    try {
-      await ghWrite(edit.repo, edit.path, edit.content, edit.commit);
-      setEditStatus(s=>({...s,[key]:"done"}));
-    } catch(e) {
-      setEditStatus(s=>({...s,[key]:"err:"+e.message}));
-    }
-  };
-
-  const resetChat = () => { setAiMessages([]); setEditStatus({}); setAiInput(""); };
-
-  return (
-    <>
-      <style>{CSS}</style>
-      <div className="app">
-
-        {/* TOP BAR */}
-        <div className="bar">
-          <button className="nav-toggle" onClick={()=>setMenuOpen(!menuOpen)}>☰</button>
-          <div className="logo">Trade<b>Stack</b> <span style={{color:"#444",fontSize:".6rem",fontWeight:300}}>/ Admin</span></div>
-          <div className="sbadge"><div className="sdot"/>S{SPRINT.num} · Day {SPRINT.dayElapsed}/{SPRINT.dayTotal}</div>
-        </div>
-
-        {/* OVERLAY */}
-        <div className={`overlay ${menuOpen?"show":""}`} onClick={()=>setMenuOpen(false)}/>
-
-        <div className="layout">
-
-          {/* SIDEBAR */}
           <div className={`sidebar ${menuOpen?"open":""}`}>
             <div className="snlbl">Scrum Events</div>
             {NAV.map(n=>(
@@ -739,7 +681,7 @@ export default function App() {
                         <div className="ri-title">{item.title}</div>
                         <div className="ri-meta">
                           <span className="pill p-x">{item.agent} Agent</span>
-                          <span className={`pill ${item.urgency==="High"?"p-r":"p-x"}`}>{item.urgency}</span>
+                          <span className={`pill ${item.urgency==="High"?"p-r":"p-x";}`}>{item.urgency}</span>
                         </div>
                       </div>
                     </div>
@@ -750,7 +692,7 @@ export default function App() {
                             <button className="brej" onClick={()=>setRstates(s=>({...s,[item.id]:"Rejected"}))}>Reject</button>
                             <button className="bedt">Edit</button></>
                         : <span style={{fontSize:".65rem",color:state==="Approved"?"#4ade80":"#f87171"}}>
-                            {state==="Approved"?"Approved — queued for action":"Rejected — returned to agent"}
+                            {state==="Approved"?"Approved ℔ queued for action":"Rejected ℔ returned to agent"}
                           </span>}
                     </div>
                   </div>
@@ -785,7 +727,7 @@ export default function App() {
               <div className="sh"><div className="st">Retrospective</div><div className="sl"/></div>
               <div className="ss">Sprint {SPRINT.num} reflection — what worked, what broke, what changes next sprint</div>
               <div className="retro-grid">
-                {RETRO.map((col,i)=>(
+                {RETRO,map((col,i)=>(
                   <div key={i} className="rcol">
                     <div className={`rcol-h ${col.cls}`}>{col.head}</div>
                     {col.items.map((item,j)=><div key={j} className="ritem">{item}</div>)}
