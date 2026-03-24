@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
-async function callClaude(system, user) {
+// ââ CLAUDE API âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+async function callClaude(system, messages) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method:"POST",
     headers:{
@@ -9,10 +10,98 @@ async function callClaude(system, user) {
       "anthropic-version": "2023-06-01",
       "anthropic-dangerous-direct-browser-access": "true",
     },
-    body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1000, system, messages:[{role:"user",content:user}] }),
+    body: JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:8000,
+      system,
+      messages,
+    }),
   });
   return (await res.json()).content?.[0]?.text || "";
 }
+
+// ââ GITHUB API âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+const GH_OWNER = "Stephone5";
+const GH_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+const ghHdr = () => ({
+  "Authorization": `token ${GH_TOKEN}`,
+  "Accept": "application/vnd.github.v3+json",
+  "Content-Type": "application/json",
+});
+
+async function ghRead(repo, path) {
+  const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${repo}/contents/${path}`, { headers: ghHdr() });
+  if (!res.ok) throw new Error(`GitHub read ${repo}/${path} â ${res.status}`);
+  const d = await res.json();
+  return decodeURIComponent(escape(atob(d.content.replace(/\n/g,""))));
+}
+
+async function ghWrite(repo, path, content, commitMsg) {
+  const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${repo}/contents/${path}`, { headers: ghHdr() });
+  if (!getRes.ok) throw new Error(`GitHub get SHA â ${getRes.status}`);
+  const { sha } = await getRes.json();
+  const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${repo}/contents/${path}`, {
+    method:"PUT",
+    headers: ghHdr(),
+    body: JSON.stringify({ message:commitMsg, content:btoa(unescape(encodeURIComponent(content))), sha }),
+  });
+  if (!putRes.ok) {
+    const err = await putRes.json();
+    throw new Error(err.message || `GitHub write â ${putRes.status}`);
+  }
+  return true;
+}
+
+// ââ EDIT BLOCK HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function parseEdits(text) {
+  const edits = [];
+  const re = /<EDIT\s+repo="([^"]+)"\s+path="([^"]+)"\s+commit="([^"]+)">([\s\S]*?)<\/EDIT>/g;
+  let m;
+  while ((m = re.exec(text)) !== null)
+    edits.push({ repo:m[1], path:m[2], commit:m[3], content:m[4].trim() });
+  return edits;
+}
+
+function stripEdits(text) {
+  return text.replace(/<EDIT[\s\S]*?<\/EDIT>/g, "").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function parseFileRequests(text) {
+  return [...text.matchAll(/^FILE_REQUEST:\s*(\S+?)\/(.+)$/gm)]
+    .map(m => ({ repo: m[1].trim(), path: m[2].trim() }));
+}
+
+// ââ AI SYSTEM PROMPT ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+const AI_SYS = `You are a senior full-stack developer for TradeStack â a B2B SaaS platform for small business financial management. You have read/write access to two GitHub repos owned by Stephone5:
+
+1. tradestack-admin â this React + Vite admin dashboard (src/App.jsx is the whole app)
+2. tradestack-app â the main user-facing React + Vite web app (src/App.jsx is the whole app)
+
+READING FILES:
+To read a file before making changes, output this on a line by itself:
+FILE_REQUEST: reponame/src/App.jsx
+
+The system will fetch it and give it back to you. Always request the file before editing it unless the user already provided the content.
+
+MAKING CHANGES â use this exact format:
+<EDIT repo="tradestack-admin" path="src/App.jsx" commit="fix: brief description">
+[COMPLETE NEW FILE CONTENT â always the full file, never partial snippets or diffs]
+</EDIT>
+
+You can include multiple EDIT blocks in one reply if changing both repos.
+
+RULES:
+- Always output COMPLETE file content inside EDIT blocks â never partial code
+- Be concise in prose: 2-3 sentences before your code
+- If you need to see a file first, request it, wait, then provide the EDIT
+- Vercel auto-deploys ~10 seconds after a GitHub push
+- Both repos are single-file React apps (all code in src/App.jsx)
+
+KNOWN ISSUES TO FIX (when asked):
+- Emoji encoding corruption â shows as "A??" or hieroglyphics in UI
+- Low contrast â dark gray text on dark gray backgrounds
+- Desktop layout too small/zoomed out â fonts and spacing need to scale up
+- Main site has confusing labels ("cogs" vs "operating expenses" etc.)`;
 
 // ââ DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const SPRINT = { num:1, start:"Mar 16", end:"Mar 30", dayElapsed:6, dayTotal:14 };
@@ -35,7 +124,7 @@ const BACKLOG = [
 const STANDUPS = [
   { date:"Mar 22 Â· Today", agents:[
     {name:"Research",emoji:"ð",s:"green",update:"Completed competitor refresh for 3 users. Flagged new competitor: Apex Mechanical (opened Nov 2025).",blocker:null},
-    {name:"Analytics",emoji:"ð",s:"green",update:"7 active users this week, 2 new signups. Avg session 8.2min. Competitor tab has 3Ã more views than Financial tab.",blocker:null},
+    {name:"Analytics",emoji:"ð",s:"green",update:"7 active users this week, 2 new signups. Avg session 8.2min. Competitor tab has 3x more views than Financial tab.",blocker:null},
     {name:"Outreach",emoji:"ð£",s:"amber",update:"4 emails drafted and queued for owner approval. 0 sent â awaiting review.",blocker:"Approval queue has 4 items pending 3+ days."},
     {name:"Product",emoji:"ð§",s:"green",update:"Triaged 6 feedback items. 2 escalated to backlog. 4 resolved as FAQ updates.",blocker:null},
     {name:"Finance",emoji:"ð°",s:"green",update:"Re-ran analysis for 2 users who updated financials. 1 critical drain flagged (user #4, op-ex 68%).",blocker:null},
@@ -58,9 +147,9 @@ const REVIEW_ITEMS = [
 ];
 
 const RETRO = [
-  {head:"â Went Well",cls:"rh-g",items:["Onboarding checklist shipped on time","Analytics digest running clean","Support Agent caught churn risk on user #3 before they left"]},
-  {head:"â  Needs Improvement",cls:"rh-a",items:["Approval queue backlog â 4 emails sat 3+ days","Competitor trust issue recurring â PB-02 should have been P0","No scope limit on Research Agent â over-delivered"]},
-  {head:"â Sprint 2 Actions",cls:"rh-b",items:["Set 48hr SLA on all review queue items","PB-02 is Sprint 2 first priority","Define word-count limit for Research Agent outputs"]},
+  {head:"Went Well",cls:"rh-g",items:["Onboarding checklist shipped on time","Analytics digest running clean","Support Agent caught churn risk on user #3 before they left"]},
+  {head:"Needs Improvement",cls:"rh-a",items:["Approval queue backlog â 4 emails sat 3+ days","Competitor trust issue recurring â PB-02 should have been P0","No scope limit on Research Agent â over-delivered"]},
+  {head:"Sprint 2 Actions",cls:"rh-b",items:["Set 48hr SLA on all review queue items","PB-02 is Sprint 2 first priority","Define word-count limit for Research Agent outputs"]},
 ];
 
 // ââ STYLES ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -79,24 +168,13 @@ body{background:#0d0d0d;}
 .sdot{width:5px;height:5px;border-radius:50%;background:#e07b39;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-/* NAV â hamburger on mobile, sidebar on desktop */
+/* NAV */
 .nav-toggle{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:3px;cursor:pointer;font-size:1rem;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
 @media(min-width:768px){.nav-toggle{display:none;}}
-
 .layout{display:flex;position:relative;}
-
-.sidebar{
-  position:fixed;top:48px;left:0;bottom:0;width:210px;
-  background:#0f0f0f;border-right:1px solid #1c1c1c;
-  overflow-y:auto;z-index:150;
-  transform:translateX(-100%);transition:transform .2s;
-  padding:1rem 0;
-}
+.sidebar{position:fixed;top:48px;left:0;bottom:0;width:210px;background:#0f0f0f;border-right:1px solid #1c1c1c;overflow-y:auto;z-index:150;transform:translateX(-100%);transition:transform .2s;padding:1rem 0;}
 .sidebar.open{transform:translateX(0);}
-@media(min-width:768px){
-  .sidebar{position:sticky;transform:none;top:0;height:calc(100vh - 48px);flex-shrink:0;}
-}
-
+@media(min-width:768px){.sidebar{position:sticky;transform:none;top:0;height:calc(100vh - 48px);flex-shrink:0;}}
 .snlbl{font-size:.55rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#333;padding:0 .9rem;margin:.9rem 0 .35rem;}
 .snlbl:first-child{margin-top:0;}
 .snbtn{display:flex;align-items:center;gap:.55rem;width:100%;padding:.5rem .9rem;border:none;background:none;cursor:pointer;text-align:left;transition:background .1s;-webkit-tap-highlight-color:transparent;}
@@ -125,7 +203,7 @@ body{background:#0d0d0d;}
 /* CARDS */
 .card{background:#111;border:1px solid #1c1c1c;border-radius:3px;padding:.9rem;}
 
-/* STATS GRID â 2 col mobile, 4 col desktop */
+/* GRIDS */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;}
 .g4{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
@@ -150,7 +228,7 @@ body{background:#0d0d0d;}
 .p-b{background:#0a1020;color:#60a5fa;}
 .p-x{background:#1a1a1a;color:#555;}
 
-/* BOARD â horizontal scroll on mobile */
+/* BOARD */
 .board-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .board{display:grid;grid-template-columns:repeat(4,minmax(200px,1fr));gap:.65rem;min-width:820px;}
 .bcol{background:#0f0f0f;border:1px solid #1c1c1c;border-radius:3px;padding:.65rem;min-height:260px;}
@@ -189,7 +267,7 @@ body{background:#0d0d0d;}
 /* PLANNING */
 .pi{display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;background:#111;border:1px solid #1c1c1c;border-radius:3px;margin-bottom:.4rem;cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .pi.sel{border-color:#e07b39;background:#1a1200;}
-.pichk{width:16px;height:16px;border-radius:2px;border:1px solid #2a2a2a;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:.62rem;flex-shrink:0;}
+.pichk{width:16px;height:16px;border-radius:2px;border:1px solid #2a2a2a;background:#1a1a1a;display:flex;align-items:center;justify-content:font-size:.62rem;flex-shrink:0;}
 .pi.sel .pichk{background:#e07b39;border-color:#e07b39;color:#000;}
 .pi-id{font-size:.58rem;color:#444;width:44px;flex-shrink:0;}
 .pi-title{font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;color:#ccc;flex:1;min-width:0;}
@@ -205,13 +283,8 @@ body{background:#0d0d0d;}
 .ritem:last-child{border-bottom:none;}
 .ritem::before{content:'â';color:#333;flex-shrink:0;}
 
-/* AI */
-.ai-in{width:100%;background:#0f0f0f;border:1px solid #1c1c1c;color:#ddd8ce;padding:.65rem .8rem;font-family:'Inconsolata',monospace;font-size:.8rem;outline:none;border-radius:3px;transition:border-color .15s;resize:vertical;min-height:80px;}
-.ai-in:focus{border-color:#e07b39;}
-.btn-run{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;background:#e07b39;color:#0d0d0d;padding:.55rem 1.1rem;border:none;cursor:pointer;border-radius:3px;transition:background .12s;-webkit-tap-highlight-color:transparent;}
-.btn-run:hover{background:#f0904a;}
-.btn-run:disabled{background:#2a2a2a;color:#555;cursor:not-allowed;}
-.ai-out{background:#0d0d0d;border:1px solid #1c1c1c;border-radius:3px;padding:.9rem;margin-top:.65rem;font-size:.73rem;color:#aaa;line-height:1.7;white-space:pre-wrap;}
+/* BLOCKERS */
+.blk-item{background:#1a0a0a;border-left:2px solid #7f1d1d;padding:.5rem .7rem;font-size:.7rem;color:#f87171;line-height:1.5;margin-bottom:.4rem;border-radius:0 3px 3px 0;}
 
 /* FLOW */
 .flow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:center;padding:1rem 0;}
@@ -222,9 +295,6 @@ body{background:#0d0d0d;}
 .fn-n{font-family:'Archivo',sans-serif;font-weight:700;font-size:.6rem;color:#555;margin-top:.15rem;}
 .fn.act .fn-n{color:#e07b39;}.fn.own .fn-n{color:#60a5fa;}
 .farrow{color:#2a2a2a;font-size:.85rem;}
-
-/* BLOCKERS */
-.blk-item{background:#1a0a0a;border-left:2px solid #7f1d1d;padding:.5rem .7rem;font-size:.7rem;color:#f87171;line-height:1.5;margin-bottom:.4rem;border-radius:0 3px 3px 0;}
 
 /* AGENT CONFIG */
 .ag-toggle{display:flex;align-items:center;gap:.55rem;margin-bottom:1rem;}
@@ -255,6 +325,58 @@ body{background:#0d0d0d;}
 .feed-del:hover{color:#f87171;}
 .feed-add{font-size:.65rem;color:#333;background:none;border:none;cursor:pointer;padding:.2rem 0;}
 .feed-add:hover{color:#888;}
+
+/* ââ AI CODE EDITOR âââââââââââââââââââââââââââââââââââââââââââââââ */
+.chat-history{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1rem;max-height:62vh;overflow-y:auto;padding:.25rem 0;scroll-behavior:smooth;}
+.chat-msg{display:flex;flex-direction:column;gap:.25rem;}
+.chat-msg.user{align-items:flex-end;}
+.chat-msg.assistant{align-items:flex-start;}
+.chat-who{font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:#444;padding:0 .15rem;}
+.chat-bubble{padding:.65rem .85rem;border-radius:3px;font-size:.78rem;line-height:1.7;max-width:92%;white-space:pre-wrap;word-break:break-word;}
+.chat-msg.user .chat-bubble{background:#1a1200;border:1px solid #3a2800;color:#ddd8ce;}
+.chat-msg.assistant .chat-bubble{background:#111;border:1px solid #1c1c1c;color:#bbb;}
+.chat-thinking{background:#111;border:1px solid #1c1c1c;border-radius:3px;padding:.55rem .85rem;font-size:.72rem;color:#e07b39;font-style:italic;}
+
+/* EDIT CARD */
+.edit-card{width:100%;background:#0a0f0a;border:1px solid #1a2e1a;border-radius:3px;overflow:hidden;margin-top:.4rem;}
+.edit-card-top{display:flex;align-items:center;gap:.5rem;padding:.45rem .7rem;background:#0d160d;border-bottom:1px solid #1a2e1a;flex-wrap:wrap;}
+.edit-repo-badge{font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4ade80;background:#0a1e0a;border:1px solid #1a3a1a;padding:.08rem .35rem;border-radius:2px;flex-shrink:0;}
+.edit-path-txt{font-family:'Inconsolata',monospace;font-size:.68rem;color:#888;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.edit-commit-txt{font-family:'Inconsolata',monospace;font-size:.62rem;color:#4ade80;opacity:.7;width:100%;}
+.edit-preview-code{font-family:'Inconsolata',monospace;font-size:.62rem;color:#444;padding:.45rem .7rem;max-height:72px;overflow:hidden;white-space:pre;line-height:1.45;border-bottom:1px solid #111;}
+.edit-footer{display:flex;align-items:center;gap:.6rem;padding:.45rem .7rem;}
+.btn-apply{font-family:'Archivo',sans-serif;font-weight:700;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;background:#0a1e10;color:#4ade80;border:1px solid #1a3a20;padding:.35rem .7rem;cursor:pointer;border-radius:2px;transition:all .15s;flex-shrink:0;}
+.btn-apply:hover:not(:disabled){background:#0f2a15;border-color:#2a4a2a;}
+.btn-apply:disabled{opacity:.4;cursor:not-allowed;}
+.btn-apply.done{background:#0a1e10;color:#4ade80;border-color:#1a3a20;}
+.edit-stat{font-size:.63rem;font-family:'Inconsolata',monospace;}
+.edit-stat.applying{color:#e07b39;}
+.edit-stat.done{color:#4ade80;}
+.edit-stat.err{color:#f87171;}
+
+/* CHAT INPUT */
+.chat-input-wrap{display:flex;flex-direction:column;gap:.4rem;}
+.chat-input-row{display:flex;gap:.5rem;align-items:flex-end;}
+.chat-textarea{flex:1;background:#0f0f0f;border:1px solid #1c1c1c;color:#ddd8ce;padding:.6rem .75rem;font-family:'Inconsolata',monospace;font-size:.8rem;outline:none;border-radius:3px;transition:border-color .15s;resize:none;min-height:56px;max-height:200px;}
+.chat-textarea:focus{border-color:#e07b39;}
+.btn-send{font-family:'Archivo',sans-serif;font-weight:700;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;background:#e07b39;color:#0d0d0d;padding:0 1rem;border:none;cursor:pointer;border-radius:3px;height:56px;flex-shrink:0;transition:background .12s;min-width:64px;}
+.btn-send:hover:not(:disabled){background:#f0904a;}
+.btn-send:disabled{background:#2a2a2a;color:#555;cursor:not-allowed;}
+.chat-meta{display:flex;justify-content:space-between;align-items:center;}
+.chat-hint{font-size:.57rem;color:#333;}
+.btn-new-chat{font-size:.6rem;color:#444;background:none;border:none;cursor:pointer;padding:0;}
+.btn-new-chat:hover{color:#888;}
+.gh-pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.58rem;font-weight:600;letter-spacing:.08em;padding:.15rem .45rem;border-radius:2px;margin-left:.4rem;}
+.gh-pill.ok{background:#0a1e0a;color:#4ade80;border:1px solid #1a3a1a;}
+.gh-pill.no{background:#1e1200;color:#e07b39;border:1px solid #3a2800;}
+.gh-dot{width:5px;height:5px;border-radius:50%;}
+.gh-pill.ok .gh-dot{background:#4ade80;}
+.gh-pill.no .gh-dot{background:#e07b39;animation:pulse 2s infinite;}
+
+/* GENERAL */
+.btn-run{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;background:#e07b39;color:#0d0d0d;padding:.55rem 1.1rem;border:none;cursor:pointer;border-radius:3px;transition:background .12s;-webkit-tap-highlight-color:transparent;}
+.btn-run:hover{background:#f0904a;}
+.btn-run:disabled{background:#2a2a2a;color:#555;cursor:not-allowed;}
 `;
 
 const AGENTS_DEFAULT = [
@@ -265,7 +387,7 @@ const AGENTS_DEFAULT = [
   {id:"finance",   name:"Finance",   emoji:"ð°", active:true,  desc:"Monitors user financials and triggers critical alerts"},
   {id:"support",   name:"Support",   emoji:"ð", active:true,  desc:"Catches churn risk and routes feedback to Product"},
   {id:"onboarding",name:"Onboarding",emoji:"ð", active:true,  desc:"Handles new-signup checklists and activation flows"},
-  {id:"strategy",  name:"Strategy",  emoji:"âï¸", active:false, desc:"Long-term planning; feeds priorities into the backlog"},
+  {id:"strategy",  name:"Strategy",  emoji:"â", active:false, desc:"Long-term planning; feeds priorities into the backlog"},
 ];
 
 const FEEDS_IN_DEFAULT = [
@@ -282,38 +404,46 @@ const FEEDS_OUT_DEFAULT = [
   "Approved intel â competitor tabs refresh",
 ];
 
-// ââ HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ââ HELPERS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const PC = {P0:"p-r",P1:"p-a",P2:"p-b",P3:"p-x"};
 const SC = {"Backlog":"p-x","In Progress":"p-a","Done":"p-g","Blocked":"p-r"};
 const TC = {"Feature":"p-b","Bug":"p-r","Improvement":"p-a"};
 
 const NAV = [
-  {id:"overview",icon:"â¬",label:"Overview"},
-  {id:"standup",icon:"âï¸",label:"Daily Standup",count:2},
-  {id:"board",icon:"ð",label:"Sprint Board"},
-  {id:"review",icon:"â",label:"Review Queue",count:5},
-  {id:"planning",icon:"ðï¸",label:"Sprint Planning"},
-  {id:"retro",icon:"ð",label:"Retrospective"},
-  {id:"backlog",icon:"ð¦",label:"Product Backlog"},
-  {id:"flow",icon:"â»ï¸",label:"Agent Loop"},
-  {id:"ai",icon:"ð¤",label:"AI Assistant"},
+  {id:"overview",  icon:"â¬", label:"Overview"},
+  {id:"standup",   icon:"âï¸", label:"Daily Standup",   count:2},
+  {id:"board",     icon:"ð", label:"Sprint Board"},
+  {id:"review",    icon:"â", label:"Review Queue",    count:5},
+  {id:"planning",  icon:"ðï¸", label:"Sprint Planning"},
+  {id:"retro",     icon:"ð", label:"Retrospective"},
+  {id:"backlog",   icon:"ð¦", label:"Product Backlog"},
+  {id:"flow",      icon:"â»ï¸", label:"Agent Loop"},
+  {id:"ai",        icon:"ð¤", label:"AI Assistant"},
 ];
 
 export default function App() {
-  const [view,setView]         = useState("overview");
-  const [menuOpen,setMenuOpen] = useState(false);
-  const [backlog,setBacklog]   = useState(BACKLOG);
-  const [rstates,setRstates]   = useState({});
-  const [selected,setSelected] = useState([]);
-  const [sdDay,setSdDay]       = useState(0);
-  const [aiIn,setAiIn]         = useState("");
-  const [aiOut,setAiOut]       = useState("");
-  const [aiRun,setAiRun]       = useState(false);
-  const [agents,setAgents]     = useState(AGENTS_DEFAULT);
-  const [feedsIn,setFeedsIn]   = useState(FEEDS_IN_DEFAULT);
-  const [feedsOut,setFeedsOut] = useState(FEEDS_OUT_DEFAULT);
+  const [view,setView]           = useState("overview");
+  const [menuOpen,setMenuOpen]   = useState(false);
+  const [backlog,setBacklog]     = useState(BACKLOG);
+  const [rstates,setRstates]     = useState({});
+  const [selected,setSelected]   = useState([]);
+  const [seDay,setSeDay]         = useState(0);
+  const [agents,setAgents]       = useState(AGENTS_DEFAULT);
+  const [feedsIn,setFeedsIn]     = useState(FEEDS_IN_DEFAULT);
+  const [feedsOut,setFeedsOut]   = useState(FEEDS_OUT_DEFAULT);
   const [showConfig,setShowConfig] = useState(false);
-  const [emojiEdit,setEmojiEdit]   = useState(null);
+  const [emojiEdit,setEmojiEdit] = useState(null);
+
+  // ââ AI CODE EDITOR STATE ââ
+  const [aiInput,setAiInput]     = useState("");
+  const [aiRun,setAiRun]         = useState(false);
+  const [aiMessages,setAiMessages] = useState([]);
+  const [editStatus,setEditStatus] = useState({});
+  const chatBottomRef = useRef(null);
+
+  useEffect(() => {
+    chatBottomRef.current?.scrollIntoView({ behavior:"smooth" });
+  }, [aiMessages, aiRun]);
 
   const navigate = (id) => { setView(id); setMenuOpen(false); };
   const sprintItems = backlog.filter(b=>b.sprint===1);
@@ -323,28 +453,86 @@ export default function App() {
   const pendingRev  = REVIEW_ITEMS.filter(r=>!rstates[r.id]||rstates[r.id]==="Pending").length;
   const blockers    = STANDUPS[0].agents.filter(a=>a.blocker);
 
-  const toggleSel = id => setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
+  const toggleSel    = id => setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
   const commitSprint = () => { setBacklog(bl=>bl.map(b=>selected.includes(b.id)?{...b,sprint:2,status:"In Progress"}:b)); setSelected([]); };
 
-  // agent helpers
   const toggleAgent = id => setAgents(a=>a.map(ag=>ag.id===id?{...ag,active:!ag.active}:ag));
   const updateAgent = (id,field,val) => setAgents(a=>a.map(ag=>ag.id===id?{...ag,[field]:val}:ag));
   const deleteAgent = id => setAgents(a=>a.filter(ag=>ag.id!==id));
-  const addAgent = () => {
+  const addAgent    = () => {
     const id = "agent-"+Date.now();
     setAgents(a=>[...a,{id,name:"New Agent",emoji:"ð¤",active:true,desc:"Describe what this agent does"}]);
   };
   const updateFeed = (list,setList,i,val) => setList(l=>l.map((x,j)=>j===i?val:x));
-  const deleteFeed = (list,setList,i) => setList(l=>l.filter((_,j)=>j!==i));
-  const addFeed = (setList) => setList(l=>[...l,"New connection â destination"]);
+  const deleteFeed = (list,setList,i)     => setList(l=>l.filter((_,j)=>j!==i));
+  const addFeed    = (setList)            => setList(l=>[...l,"New connection â destination"]);
 
-  const runAI = async () => {
-    setAiRun(true); setAiOut("");
-    const sys = `You are the AI Scrum assistant for TradeStack. Sprint ${SPRINT.num}, Day ${SPRINT.dayElapsed}/${SPRINT.dayTotal}. ${SPRINT.dayTotal-SPRINT.dayElapsed} days left. Velocity: ${donePts}/${totalPts} pts. ${pendingRev} items pending review. ${blockers.length} active blockers. Be direct and tactical.`;
-    const out = await callClaude(sys, aiIn);
-    setAiOut(out); setAiRun(false);
+  // ââ AI SEND âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  const sendMessage = async () => {
+    if (!aiInput.trim() || aiRun) return;
+    const userText = aiInput.trim();
+    setAiInput("");
+    setAiRun(true);
+
+    const newUserMsg = { role:"user", content:userText };
+    const history = [...aiMessages, newUserMsg];
+    setAiMessages(history);
+
+    // Build API messages from history
+    const apiMsgs = history.map(m => ({ role:m.role, content:m.content }));
+
+    try {
+      let response = await callClaude(AI_SYS, apiMsgs);
+      let workingApiMsgs = [...apiMsgs, { role:"assistant", content:response }];
+
+      // Handle FILE_REQUEST lines
+      const fileReqs = parseFileRequests(response);
+      if (fileReqs.length > 0) {
+        const parts = [];
+        for (const req of fileReqs) {
+          try {
+            const content = await ghRead(req.repo, req.path);
+            parts.push(`\n\nFile: ${req.repo}/${req.path}\n\`\`\`jsx\n${content}\n\`\`\``);
+          } catch(e) {
+            parts.push(`\n\n[Could not read ${req.repo}/${req.path}: ${e.message}]`);
+          }
+        }
+        const fileMsg = `Here are the files you requested:${parts.join("")}\n\nNow please provide your changes.`;
+        workingApiMsgs = [...workingApiMsgs, { role:"user", content:fileMsg }];
+        response = await callClaude(AI_SYS, workingApiMsgs);
+      }
+
+      const edits   = parseEdits(response);
+      const display = stripEdits(response);
+
+      setAiMessages(prev => [...prev, {
+        role:"assistant",
+        content:response,
+        display,
+        edits,
+      }]);
+    } catch(e) {
+      setAiMessages(prev => [...prev, {
+        role:"assistant",
+        content:`Error: ${e.message}`,
+        display:`Error: ${e.message}`,
+        edits:[],
+      }]);
+    }
+    setAiRun(false);
   };
 
+  const applyEdit = async (edit, key) => {
+    setEditStatus(s=>({...s,[key]:"applying"}));
+    try {
+      await ghWrite(edit.repo, edit.path, edit.content, edit.commit);
+      setEditStatus(s=>({...s,[key]:"done"}));
+    } catch(e) {
+      setEditStatus(s=>({...s,[key]:"err:"+e.message}));
+    }
+  };
+
+  const resetChat = () => { setAiMessages([]); setEditStatus({}); setAiInput(""); };
 
   return (
     <>
@@ -382,7 +570,6 @@ export default function App() {
             {view==="overview"&&<>
               <div className="sh"><div className="st">Sprint {SPRINT.num} Overview</div><div className="sl"/></div>
               <div className="ss">{SPRINT.start} â {SPRINT.end} Â· You are Scrum Master</div>
-
               <div className="g4" style={{marginBottom:"1rem"}}>
                 {[
                   {v:"7",l:"Active Users",d:"+2 this week",up:true},
@@ -397,45 +584,12 @@ export default function App() {
                   </div>
                 ))}
               </div>
-
               <div className="card" style={{marginBottom:"1rem"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:".4rem"}}>
-                  <span style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888"}}>Sprint Progress</span>
-                  <span style={{fontSize:".65rem",color:"#e07b39"}}>{pct}% elapsed Â· {Math.round((donePts/totalPts)*100)}% done</span>
-                </div>
-                <div className="sbar-wrap"><div className="sbar-fill" style={{width:`${pct}%`}}/></div>
-                <div className="tick-row">
-                  {sprintItems.map(t=>(
-                    <div key={t.id} className="tick" style={{background:t.status==="Done"?"#4ade80":t.status==="In Progress"?"#e07b39":"#2a2a2a"}} title={t.title}/>
-                  ))}
-                </div>
-              </div>
-
-              <div className="g2">
-                <div className="card">
-                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Today's Blockers</div>
-                  {blockers.length===0
-                    ? <div style={{color:"#4ade80",fontSize:".7rem"}}>â No blockers</div>
-                    : blockers.map((a,i)=><div key={i} className="blk-item">ð§ <strong style={{color:"#f87171"}}>{a.name}:</strong> {a.blocker}</div>)}
-                </div>
-                <div className="card">
-                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Sprint Goals</div>
-                  {sprintItems.map(t=>(
-                    <div key={t.id} style={{display:"flex",alignItems:"flex-start",gap:".45rem",marginBottom:".35rem"}}>
-                      <span style={{fontSize:".7rem",flexShrink:0}}>{t.status==="Done"?"â":t.status==="In Progress"?"ð":"â¬"}</span>
-                      <span style={{fontSize:".7rem",color:t.status==="Done"?"#4ade80":"#888",lineHeight:1.4}}>{t.title}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>}
-
-            {/* STANDUP */}
-            {view==="standup"&&<>
-              <div className="sh"><div className="st">Daily Standup</div><div className="sl"/></div>
-              <div className="ss">Each agent reports: what they did, doing, and what's blocking them</div>
+                  <span style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"w#888"}}>Sprint Progress</span>
+                  <span style={{fontSize:".65rem",color:"#e07b39"}}>{passName="ss">Each agent reports: what they did, doing, and what's blocking them</div>
               <div className="sdup-tabs">
-                {STANDUPS.map((s,i)=><button key={i} className={`sdup-tab ${seDay===i?"on":""}`} onClick={()=>setSdDay(i)}>{s.date}</button>)}
+                {STANDUPS.map((s,i)=><button key={i} className={`sdup-tab ${sdDay===i?"on":""}`} onClick={()=>setSdDay(i)}>{s.date}</button>)}
               </div>
               <div className="card">
                 {STANDUPS[sdDay].agents.map((a,i)=>(
@@ -445,7 +599,7 @@ export default function App() {
                     <div style={{flex:1,minWidth:0}}>
                       <div className="san">{a.name} Agent</div>
                       <div className="sau">{a.update}</div>
-                      {a.blocker&&<div className="sblk">ð§ {a.blocker}</div>}
+                      {a.blocker&&<div className="sblk">{a.blocker}</div>}
                     </div>
                   </div>
                 ))}
@@ -503,11 +657,11 @@ export default function App() {
                     <div className="ri-pre">{item.preview}</div>
                     <div className="ri-acts">
                       {!state||state==="Pending"
-                        ? <><button className="bapp" onClick={()=>setRstates(s=>({...s,[item.id]:"Approved"}))}>â Approve</button>
-                            <button className="brej" onClick={()=>setRstates(s=>({...s,[item.id]:"Rejected"}))}>â Reject</button>
+                        ? <><button className="bapp" onClick={()=>setRstates(s=>({...s,[item.id]:"Approved"}))}>Approve</button>
+                            <button className="brej" onClick={()=>setRstates(s=>({...s,[item.id]:"Rejected"}))}>Reject</button>
                             <button className="bedt">Edit</button></>
                         : <span style={{fontSize:".65rem",color:state==="Approved"?"#4ade80":"#f87171"}}>
-                            {state==="Approved"?"â Approved â queued for action":"â Rejected â returned to agent"}
+                            {state==="Approved"?"Approved â queued for action":"Rejected â returned to agent"}
                           </span>}
                     </div>
                   </div>
@@ -520,10 +674,10 @@ export default function App() {
               <div className="sh"><div className="st">Sprint Planning</div><div className="sl"/></div>
               <div className="ss">Select backlog items for Sprint 2. You set scope â agents execute.</div>
               <div className="card" style={{marginBottom:"1rem"}}>
-                <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".25rem"}}>
+                <div style={{fontFamily:"trchivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".25rem"}}>
                   Sprint 2 Â· Selected: {selected.reduce((a,id)=>a+(backlog.find(b=>b.id===id)?.pts||0),0)} story points
                 </div>
-                <div style={{fontSize:".68rem",color:"#555"}}>Sprint 1 velocity: {donePts} pts. Match or go slightly under.</div>
+                <div style={{fontSize:".68rem",color:"w555"}}>Sprint 1 velocity: {donePts} pts. Match or go slightly under.</div>
               </div>
               {backlog.filter(b=>!b.sprint).sort((a,b)=>a.priority.localeCompare(b.priority)).map(item=>(
                 <div key={item.id} className={`pi ${selected.includes(item.id)?"sel":""}`} onClick={()=>toggleSel(item.id)}>
@@ -571,8 +725,6 @@ export default function App() {
             {view==="flow"&&<>
               <div className="sh"><div className="st">Circular Agent Loop</div><div className="sl"/></div>
               <div className="ss">Agents feed each other every sprint â nothing terminates, everything loops back into the backlog</div>
-
-              {/* Visual flow diagram â dynamically from agents state */}
               <div className="card" style={{marginBottom:".75rem"}}>
                 <div className="flow">
                   {agents.map((ag,i)=>[
@@ -586,68 +738,38 @@ export default function App() {
                   <div className="fn own"><div className="fn-e">ð§</div><div className="fn-n">You (SM)</div></div>
                 </div>
               </div>
-
-              {/* Configure toggle */}
               <div className="ag-toggle">
                 <button className={`ag-toggle-btn ${showConfig?"active":""}`} onClick={()=>setShowConfig(s=>!s)}>
                   {showConfig?"â² Hide Config":"â Configure Agents"}
                 </button>
                 {showConfig&&<span style={{fontSize:".62rem",color:"#555"}}>Click any field to edit Â· Changes update the loop above</span>}
               </div>
-
-              {/* Config panel */}
-    /         {showConfig&&<>
+              {showConfig&&<>
                 <div className="card" style={{marginBottom:".75rem"}}>
                   <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".75rem",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                     Agents
                     <span style={{fontSize:".6rem",color:"#444",fontFamily:"'Inconsolata',monospace",fontWeight:300}}>{agents.filter(a=>a.active).length} active Â· {agents.filter(a=>!a.active).length} inactive</span>
                   </div>
-
                   {agents.map(ag=>(
                     <div key={ag.id} className={`ag-row ${!ag.active?"inactive":""}`}>
-                      {/* Emoji picker */}
                       {emojiEdit===ag.id
-                        ? <input
-                            autoFocus
-                            style={{width:"2.5rem",fontSize:"1rem",background:"#1a1a1a",border:"1px solid #e07b39",borderRadius:"2px",color:"#ddd8ce",textAlign:"center",padding:".1rem"}}
+                        ? <input autoFocus style={{width:"2.5rem",fontSize:"1rem",background:"#1a1a1a",border:"1px solid #e07b39",borderRadius:"2px",color:"#ddd8ce",textAlign:"center",padding:".1rem"}}
                             defaultValue={ag.emoji}
                             onBlur={e=>{updateAgent(ag.id,"emoji",e.target.value.trim()||ag.emoji);setEmojiEdit(null);}}
-                            onKeyDown={e=>{if(e.key==="Enter"){updateAgent(ag.id,"emoji",e.target.value.trim()||ag.emoji);setEmojiEdit(null);}}}
-                          />
+                            onKeyDown={e=>{if(e.key==="Enter"){updateAgent(ag.id,"emoji",e.target.value.trim()||ag.emoji);setEmojiEdit(null);}}}/>
                         : <button className="ag-emoji-btn" title="Click to change emoji" onClick={()=>setEmojiEdit(ag.id)}>{ag.emoji}</button>
                       }
-
-                      {/* Name */}
-                      <input
-                        className="ag-name-input"
-                        value={ag.name}
-                        onChange={e=>updateAgent(ag.id,"name",e.target.value)}
-                        placeholder="Agent name"
-                      />
-
-                      {/* Description */}
-                      <input
-                        className="ag-desc-input"
-                        value={ag.desc}
-                        onChange={e=>updateAgent(ag.id,"desc",e.target.value)}
-                        placeholder="What does this agent do?"
-                      />
-
-                      {/* Active toggle */}
-                      <label className="ag-switch" title={ag.active?"Disable agent":"Enable agent"}>
+                      <input className="ag-name-input" value={ag.name} onChange={e=>updateAgent(ag.id,"name",e.target.value)} placeholder="Agent name"/>
+                      <input className="ag-desc-input" value={ag.desc} onChange={e=>updateAgent(ag.id,"desc",e.target.value)} placeholder="What does this agent do?"/>
+                      <label className="ag-switch" title={ag.active?"Disable":"Enable"}>
                         <input type="checkbox" checked={ag.active} onChange={()=>toggleAgent(ag.id)}/>
                         <span className="ag-slider"/>
                       </label>
-
-                      {/* Delete */}
                       <button className="ag-del" title="Remove agent" onClick={()=>deleteAgent(ag.id)}>â</button>
                     </div>
                   ))}
-
                   <button className="ag-add" onClick={addAgent}>+ Add Agent</button>
                 </div>
-
-                {/* Feeds In / Feeds Out editable lists */}
                 <div className="g2">
                   <div className="card">
                     <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Feeds INTO the loop</div>
@@ -673,8 +795,6 @@ export default function App() {
                   </div>
                 </div>
               </>}
-
-              {/* Read-only feeds when config is hidden */}
               {!showConfig&&<div className="g2">
                 {[
                   {title:"Feeds INTO the loop",items:feedsIn},
@@ -688,23 +808,96 @@ export default function App() {
               </div>}
             </>}
 
-            {/* AI ASSISTANT */}
+            {/* AI CODE EDITOR */}
             {view==="ai"&&<>
-              <div className="sh"><div className="st">AI Scrum Assistant</div><div className="sl"/></div>
-              <div className="ss">Ask anything about sprint health, priorities, or process. You are Scrum Master â this is your advisor.</div>
-              <div className="card" style={{marginBottom:".75rem"}}>
-                <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".5rem"}}>Sprint Context (auto-loaded)</div>
-                <div style={{fontSize:".68rem",color:"#555",lineHeight:1.8}}>
-                  Sprint {SPRINT.num} Â· Day {SPRINT.dayElapsed}/{SPRINT.dayTotal} Â· {SPRINT.dayTotal-SPRINT.dayElapsed}d left<br/>
-                  Velocity: {donePts}/{totalPts} pts Â· {sprintItems.filter(b=>b.status==="Done").length}/{sprintItems.length} tickets done<br/>
-                  Review queue: {pendingRev} pending Â· Blockers: {blockers.length} active
+              <div className="sh">
+                <div className="st">AI Code Editor</div>
+                <div className="sl"/>
+              </div>
+              <div className="ss">
+                Chat with Claude to edit this admin or the main TradeStack site. Changes push live to GitHub â Vercel builds in ~10s.
+                {GH_TOKEN
+                  ? <span className="gh-pill ok"><span className="gh-dot"/>GitHub connected</span>
+                  : <span className="gh-pill no"><span className="gh-dot"/>Add VITE_GITHUB_TOKEN in Vercel to enable pushes</span>}
+              </div>
+
+              {/* Chat history */}
+              {aiMessages.length > 0 && (
+                <div className="chat-history">
+                  {aiMessages.map((msg,i)=>(
+                    <div key={i} className={`chat-msg ${msg.role}`}>
+                      <span className="chat-who">{msg.role==="user"?"You":"Claude"}</span>
+                      {(msg.display||msg.content)&&(
+                        <div className="chat-bubble">{msg.display||msg.content}</div>
+                      )}
+                      {msg.edits&&msg.edits.length>0&&msg.edits.map((edit,j)=>{
+                        const key = `${i}-${j}`;
+                        const st  = editStatus[key];
+                        const isDone = st==="done";
+                        const isApplying = st==="applying";
+                        const isErr = st&&st.startsWith("err:");
+                        return (
+                          <div key={j} className="edit-card">
+                            <div className="edit-card-top">
+                              <span className="edit-repo-badge">{edit.repo}</span>
+                              <span className="edit-path-txt">{edit.path}</span>
+                              <span className="edit-commit-txt">{edit.commit}</span>
+                            </div>
+                            <div className="edit-preview-code">{edit.content.slice(0,300)}</div>
+                            <div className="edit-footer">
+                              <button
+                                className={`btn-apply ${isDone?"done":""}`}
+                                disabled={!GH_TOKEN||isApplying||isDone}
+                                onClick={()=>applyEdit(edit,key)}
+                              >
+                                {isDone?"â Applied":isApplying?"Pushingâ¦":"â Push to GitHub"}
+                              </button>
+                              {st&&(
+                                <span className={`edit-stat ${isDone?"done":isApplying?"applying":isErr?"err":""}`}>
+                                  {isDone?"Vercel is buildingâ¦":isApplying?"":isErr?st.replace("err:",""):st}
+                                </span>
+                              )}
+                              {!AH_TOKEN&&<span className="edit-stat" style={{color:"#555"}}>Add VITE_GITHUB_TOKEN to push</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                  {aiRun&&(
+                    <div className="chat-msg assistant">
+                      <span className="chat-who">Claude</span>
+                      <div className="chat-thinking">Thinkingâ¦</div>
+                    </div>
+                  )}
+                  <div ref={chatBottomRef}/>
+                </div>
+              )}
+
+              {/* Input */}
+              <div className="chat-input-wrap">
+                <div className="chat-input-row">
+                  <textarea
+                    className="chat-textarea"
+                    rows={2}
+                    placeholder={aiMessages.length===0
+                      ? "Try: \"Fix the emoji encoding corruption in the admin\"\nOr: \"Make the main site text more readable â better contrast\"\nOr: \"The desktop layout is too zoomed out, fix it\""
+                      : "Continue the conversationâ¦"}
+                    value={aiInput}
+                    onChange={e=>setAiInput(e.target.value)}
+                    onKeyDown={e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();sendMessage();}}}
+                  />
+                  <button className="btn-send" disabled={aiRun||!aiInput.trim()} onClick={sendMessage}>
+                    {aiRun?"â¦":"Send"}
+                  </button>
+                </div>
+                <div className="chat-meta">
+                  <span className="chat-hint">Cmd+Enter to send Â· Claude reads files from GitHub automatically</span>
+                  {aiMessages.length>0&&(
+                    <button className="btn-new-chat" onClick={resetChat}>âº New chat</button>
+                  )}
                 </div>
               </div>
-              <textarea className="ai-in" placeholder={"Examples:\nâ¢ What should I handle first in my review queue?\nâ¢ Can we still hit sprint goals with time left?\nâ¢ How should I structure Sprint 2?\nâ¢ The competitor tab is causing churn â fastest fix?"} value={aiIn} onChange={e=>setAiIn(e.target.value)}/>
-              <div style={{display:"flex",justifyContent:"flex-end",marginTop:".5rem"}}>
-                <button className="btn-run" disabled={aiRun||!aiIn.trim()} onClick={runAI}>{aiRun?"Thinkingâ¦":"â¶ Ask Assistant"}</button>
-              </div>
-              {(aiRun||aiOut)&&<div className="ai-out">{aiRun?<span style={{color:"#e07b39"}}>Processingâ¦</span>:aiOut}</div>}
             </>}
 
           </div>
