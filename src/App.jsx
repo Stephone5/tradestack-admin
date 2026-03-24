@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-// ââ CLAUDE API âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CLAUDE API ─────────────────────────────────────────────────────────────────
 async function callClaude(system, messages) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method:"POST",
@@ -20,7 +20,7 @@ async function callClaude(system, messages) {
   return (await res.json()).content?.[0]?.text || "";
 }
 
-// ââ GITHUB API âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── GITHUB API ─────────────────────────────────────────────────────────────────
 const GH_OWNER = "Stephone5";
 const GH_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const ghHdr = () => ({
@@ -31,14 +31,14 @@ const ghHdr = () => ({
 
 async function ghRead(repo, path) {
   const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${repo}/contents/${path}`, { headers: ghHdr() });
-  if (!res.ok) throw new Error(`GitHub read ${repo}/${path} â ${res.status}`);
+  if (!res.ok) throw new Error(`GitHub read ${repo}/${path} → ${res.status}`);
   const d = await res.json();
   return decodeURIComponent(escape(atob(d.content.replace(/\n/g,""))));
 }
 
 async function ghWrite(repo, path, content, commitMsg) {
   const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${repo}/contents/${path}`, { headers: ghHdr() });
-  if (!getRes.ok) throw new Error(`GitHub get SHA â ${getRes.status}`);
+  if (!getRes.ok) throw new Error(`GitHub get SHA → ${getRes.status}`);
   const { sha } = await getRes.json();
   const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${repo}/contents/${path}`, {
     method:"PUT",
@@ -47,12 +47,12 @@ async function ghWrite(repo, path, content, commitMsg) {
   });
   if (!putRes.ok) {
     const err = await putRes.json();
-    throw new Error(err.message || `GitHub write â ${putRes.status}`);
+    throw new Error(err.message || `GitHub write → ${putRes.status}`);
   }
   return true;
 }
 
-// ââ EDIT BLOCK HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── EDIT BLOCK HELPERS ────────────────────────────────────────────────────────
 function parseEdits(text) {
   const edits = [];
   const re = /<EDIT\s+repo="([^"]+)"\s+path="([^"]+)"\s+commit="([^"]+)">([\s\S]*?)<\/EDIT>/g;
@@ -71,11 +71,11 @@ function parseFileRequests(text) {
     .map(m => ({ repo: m[1].trim(), path: m[2].trim() }));
 }
 
-// ââ AI SYSTEM PROMPT ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-const AI_SYS = `You are a senior full-stack developer for TradeStack â a B2B SaaS platform for small business financial management. You have read/write access to two GitHub repos owned by Stephone5:
+// ── AI SYSTEM PROMPT ──────────────────────────────────────────────────────────
+const AI_SYS = `You are a senior full-stack developer for TradeStack — a B2B SaaS platform for small business financial management. You have read/write access to two GitHub repos owned by Stephone5:
 
-1. tradestack-admin â this React + Vite admin dashboard (src/App.jsx is the whole app)
-2. tradestack-app â the main user-facing React + Vite web app (src/App.jsx is the whole app)
+1. tradestack-admin — this React + Vite admin dashboard (src/App.jsx is the whole app)
+2. tradestack-app — the main user-facing React + Vite web app (src/App.jsx is the whole app)
 
 READING FILES:
 To read a file before making changes, output this on a line by itself:
@@ -83,27 +83,27 @@ FILE_REQUEST: reponame/src/App.jsx
 
 The system will fetch it and give it back to you. Always request the file before editing it unless the user already provided the content.
 
-MAKING CHANGES â use this exact format:
+MAKING CHANGES — use this exact format:
 <EDIT repo="tradestack-admin" path="src/App.jsx" commit="fix: brief description">
-[COMPLETE NEW FILE CONTENT â always the full file, never partial snippets or diffs]
+[COMPLETE NEW FILE CONTENT — always the full file, never partial snippets or diffs]
 </EDIT>
 
 You can include multiple EDIT blocks in one reply if changing both repos.
 
 RULES:
-- Always output COMPLETE file content inside EDIT blocks â never partial code
+- Always output COMPLETE file content inside EDIT blocks — always the full file, never partial code
 - Be concise in prose: 2-3 sentences before your code
 - If you need to see a file first, request it, wait, then provide the EDIT
 - Vercel auto-deploys ~10 seconds after a GitHub push
-- Both repos are single-file React apps (all code in src/App.jsx)
+- Both repos are single-file React apps  all code in src/App.jsx)
 
 KNOWN ISSUES TO FIX (when asked):
-- Emoji encoding corruption â shows as "A??" or hieroglyphics in UI
-- Low contrast â dark gray text on dark gray backgrounds
-- Desktop layout too small/zoomed out â fonts and spacing need to scale up
+- Emoji encoding corruption — shows as "A??" or hieroglyphics in UI
+- Low contrast — dark gray text on dark gray backgrounds
+- Desktop layout too small/zoomed out — fonts and spacing need to scale up
 - Main site has confusing labels ("cogs" vs "operating expenses" etc.)`;
 
-// ââ DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── DATA ──────────────────────────────────────────────────────────────────────
 const SPRINT = { num:1, start:"Mar 16", end:"Mar 30", dayElapsed:6, dayTotal:14 };
 
 const BACKLOG = [
@@ -122,37 +122,37 @@ const BACKLOG = [
 ];
 
 const STANDUPS = [
-  { date:"Mar 22 Â· Today", agents:[
-    {name:"Research",emoji:"ð",s:"green",update:"Completed competitor refresh for 3 users. Flagged new competitor: Apex Mechanical (opened Nov 2025).",blocker:null},
-    {name:"Analytics",emoji:"ð",s:"green",update:"7 active users this week, 2 new signups. Avg session 8.2min. Competitor tab has 3x more views than Financial tab.",blocker:null},
-    {name:"Outreach",emoji:"ð£",s:"amber",update:"4 emails drafted and queued for owner approval. 0 sent â awaiting review.",blocker:"Approval queue has 4 items pending 3+ days."},
-    {name:"Product",emoji:"ð§",s:"green",update:"Triaged 6 feedback items. 2 escalated to backlog. 4 resolved as FAQ updates.",blocker:null},
-    {name:"Finance",emoji:"ð°",s:"green",update:"Re-ran analysis for 2 users who updated financials. 1 critical drain flagged (user #4, op-ex 68%).",blocker:null},
-    {name:"Support",emoji:"ð",s:"red",update:"1 frustrated user â said competitor tab 'feels like fake data'. Risk of churn.",blocker:"PB-02 unresolved â causing repeat complaints."},
+  { date:"Mar 22 · Today", agents:[
+    {name:"Research",emoji:"🔍",s:"green",update:"Completed competitor refresh for 3 users. Flagged new competitor: Apex Mechanical (opened Nov 2025).",blocker:null},
+    {name:"Analytics",emoji:"📊",s:"green",update:"7 active users this week, 2 new signups. Avg session 8.2min. Competitor tab has 3x more views than Financial tab.",blocker:null},
+    {name:"Outreach",emoji:"📣",s:"amber",update:"4 emails drafted and queued for owner approval. 0 sent — awaiting review.",blocker:"Approval queue has 4 items pending 3+ days."},
+    {name:"Product",emoji:"🔧",s:"green",update:"Triaged 6 feedback items. 2 escalated to backlog. 4 resolved as FAQ updates.",blocker:null},
+    {name:"Finance",emoji:"💰",s:"green",update:"Re-ran analysis for 2 users who updated financials. 1 critical drain flagged (user #4, op-ex 68%).",blocker:null},
+    {name:"Support",emoji:"🛟",s:"red",update:"1 frustrated user — said competitor tab 'feels like fake data'. Risk of churn.",blocker:"PB-02 unresolved — causing repeat complaints."},
   ]},
   { date:"Mar 21", agents:[
-    {name:"Research",emoji:"ð",s:"green",update:"Weekly market scan complete. 3 new prospects added to outreach queue.",blocker:null},
-    {name:"Analytics",emoji:"ð",s:"green",update:"Signup-to-setup completion: 71%. 2 users dropped at financial data entry.",blocker:null},
-    {name:"Outreach",emoji:"ð£",s:"green",update:"Drafted 3 cold emails. Delivered to approval queue.",blocker:null},
-    {name:"Support",emoji:"ð",s:"green",update:"2 feedback items: 1 feature request (PDF export), 1 positive. Both routed to Product Agent.",blocker:null},
+    {name:"Research",emoji:"🔍",s:"green",update:"Weekly market scan complete. 3 new prospects added to outreach queue.",blocker:null},
+    {name:"Analytics",emoji:"📊",s:"green",update:"Signup-to-setup completion: 71%. 2 users dropped at financial data entry.",blocker:null},
+    {name:"Outreach",emoji:"📣",s:"green",update:"Drafted 3 cold emails. Delivered to approval queue.",blocker:null},
+    {name:"Support",emoji:"🛟",s:"green",update:"2 feedback items: 1 feature request (PDF export), 1 positive. Both routed to Product Agent.",blocker:null},
   ]},
 ];
 
 const REVIEW_ITEMS = [
-  {id:"R-01",agent:"Outreach",emoji:"ð£",title:"Cold email â Castle Home Repair LLC",urgency:"Normal",preview:`Subject: Quick question about your schedule\n\nHey â saw Castle Home Repair on Yelp. Honest question: are you spending more time answering calls and chasing invoices than actually doing repairs?\n\nWe built a free tool that shows trades businesses exactly where they're losing money. 10 minutes to set up. Free for 90 days, no card.\n\nWorth a look?`},
-  {id:"R-02",agent:"Outreach",emoji:"ð£",title:"Cold email â J&T Painting",urgency:"Normal",preview:`Subject: Quick question for J&T\n\nRunning a painting crew means you're the estimator, scheduler, bookkeeper, and HR department all at once. We made something that shows you exactly where that's costing you money.\n\nFree for 90 days, 10 minutes to set up.\n\nInterested?`},
-  {id:"R-03",agent:"Product",emoji:"ð§",title:"Feature Spec: Competitor real data (PB-02)",urgency:"High",preview:`P0 â Critical\nProblem: Users recognize competitor data as AI estimates, not real businesses. Causing trust loss.\nSolution: Integrate web search â pull real business names, ratings, review counts from Google/Yelp API.\nSuccess metric: 0 "fake data" complaints within 14 days of ship.\nEffort: 3-5 days dev.`},
-  {id:"R-04",agent:"Finance",emoji:"ð°",title:"Alert: User #4 critical drain",urgency:"High",preview:`User: Apex Handyman (Mike R.)\nOp-ex ratio: 68% â industry avg is 38-45%.\nLikely cause: Vehicle/fuel costs + tools not tracked per job.\nAction needed: Owner approval to surface this alert to the user's dashboard.`},
-  {id:"R-05",agent:"Research",emoji:"ð",title:"New competitor: Apex Mechanical SC",urgency:"Normal",preview:`New business: Apex Mechanical, State College PA. Opened ~Nov 2025.\nEst. revenue: <$50K. Targeting HVAC + plumbing residential.\nThreat: Low now, Medium within 12 months.\nOpportunity: No online presence yet â your users can capture reviews first.`},
+  {id:"R-01",agent:"Outreach",emoji:"📣",title:"Cold email — Castle Home Repair LLC",urgency:"Normal",preview:`Subject: Quick question about your schedule\n\nHey — saw Castle Home Repair on Yelp. Honest question: are you spending more time answering calls and chasing invoices than actually doing repairs?\n\nWe built a free tool that shows trades businesses exactly where they're losing money. 10 minutes to set up. Free for 90 days, no card.\n\nWorth a look?`},
+  {id:"R-02",agent:"Outreach",emoji:"📣",title:"Cold email — J&T Painting",urgency:"Normal",preview:`Subject: Quick question for J&T\n\nRunning a painting crew means you're the estimator, scheduler, bookkeeper, and HR department all at once. We made something that shows you exactly where that's costing you money.\n\nFree for 90 days, 10 minutes to set up.\n\nInterested?`},
+  {id:"R-03",agent:"Product",emoji:"🔧",title:"Feature Spec: Competitor real data (PB-02)",urgency:"High",preview:`P0 — Critical\nProblem: Users recognize competitor data as AI estimates, not real businesses. Causing trust loss.\nSolution: Integrate web search — pull real business names, ratings, review counts from Google/Yelp API.\nSuccess metric: 0 "fake data" complaints within 14 days of ship.\nEffort: 3-5 days dev.`},
+  {id:"R-04",agent:"Finance",emoji:"💰",title:"Alert: User #4 critical drain",urgency:"High",preview:`User: Apex Handyman (Mike R.)\nOp-ex ratio: 68% — industry avg is 38-45%.\nLikely cause: Vehicle/fuel costs + tools not tracked per job.\nAction needed: Owner approval to surface this alert to the user's dashboard.`},
+  {id:"R-05",agent:"Research",emoji:"🔍",title:"New competitor: Apex Mechanical SC",urgency:"Normal",preview:`New business: Apex Mechanical, State College PA. Opened ~Nov 2025.\nEst. revenue: <$50K. Targeting HVAC + plumbing residential.\nThreat: Low now, Medium within 12 months.\nOpportunity: No online presence yet — your users can capture reviews first.`},
 ];
 
 const RETRO = [
   {head:"Went Well",cls:"rh-g",items:["Onboarding checklist shipped on time","Analytics digest running clean","Support Agent caught churn risk on user #3 before they left"]},
-  {head:"Needs Improvement",cls:"rh-a",items:["Approval queue backlog â 4 emails sat 3+ days","Competitor trust issue recurring â PB-02 should have been P0","No scope limit on Research Agent â over-delivered"]},
+  {head:"Needs Improvement",cls:"rh-a",items:["Approval queue backlog — 4 emails sat 3+ days","Competitor trust issue recurring — PB-02 should have been P0","No scope limit on Research Agent — over-delivered"]},
   {head:"Sprint 2 Actions",cls:"rh-b",items:["Set 48hr SLA on all review queue items","PB-02 is Sprint 2 first priority","Define word-count limit for Research Agent outputs"]},
 ];
 
-// ââ STYLES ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── STYLES ────────────────────────────────────────────────────────────────────
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inconsolata:wght@300;400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -237,51 +237,7 @@ body{background:#0d0d0d;}
 .ticket{background:#141414;border:1px solid #202020;border-radius:3px;padding:.6rem;margin-bottom:.45rem;}
 .t-id{font-size:.56rem;color:#444;margin-bottom:.15rem;}
 .t-title{font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;color:#ccc;line-height:1.3;margin-bottom:.35rem;}
-.t-meta{display:flex;gap:.25rem;flex-wrap:wrap;}
-.t-src{font-size:.58rem;color:#444;margin-top:.25rem;}
-
-/* STANDUP */
-.sdup-tabs{display:flex;gap:.4rem;margin-bottom:.9rem;overflow-x:auto;}
-.sdup-tab{padding:.3rem .7rem;background:#1a1a1a;color:#666;border:1px solid #2a2a2a;border-radius:2px;cursor:pointer;font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
-.sdup-tab.on{background:#e07b39;color:#0d0d0d;border-color:#e07b39;}
-.sr{display:flex;align-items:flex-start;gap:.65rem;padding:.7rem 0;border-bottom:1px solid #161616;}
-.sr:last-child{border-bottom:none;}
-.si{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-.sig{background:#4ade80;}.sia{background:#e07b39;animation:pulse 2s infinite;}.sir{background:#f87171;}
-.sava{width:30px;height:30px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
-.san{font-family:'Archivo',sans-serif;font-weight:700;font-size:.75rem;color:#ccc;}
-.sau{font-size:.7rem;color:#888;line-height:1.5;margin-top:.12rem;}
-.sblk{margin-top:.35rem;background:#1a0a0a;border-left:2px solid #7f1d1d;padding:.35rem .55rem;font-size:.68rem;color:#f87171;line-height:1.45;}
-
-/* REVIEW */
-.ri{background:#111;border:1px solid #1c1c1c;border-radius:3px;padding:.9rem;margin-bottom:.65rem;}
-.ri-hdr{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:.55rem;}
-.ri-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:.82rem;color:#ddd8ce;}
-.ri-meta{display:flex;gap:.35rem;align-items:center;margin-top:.18rem;flex-wrap:wrap;}
-.ri-pre{font-size:.7rem;color:#777;line-height:1.6;white-space:pre-wrap;background:#0d0d0d;border:1px solid #191919;padding:.65rem;border-radius:3px;margin-bottom:.65rem;max-height:130px;overflow-y:auto;}
-.ri-acts{display:flex;gap:.45rem;flex-wrap:wrap;}
-.bapp{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#0a1e10;color:#4ade80;border:1px solid #1a3a20;padding:.38rem .75rem;cursor:pointer;border-radius:2px;-webkit-tap-highlight-color:transparent;}
-.brej{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#1e0a0a;color:#f87171;border:1px solid #3a1a1a;padding:.38rem .75rem;cursor:pointer;border-radius:2px;}
-.bedt{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#1a1a1a;color:#888;border:1px solid #2a2a2a;padding:.38rem .75rem;cursor:pointer;border-radius:2px;}
-
-/* PLANNING */
-.pi{display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;background:#111;border:1px solid #1c1c1c;border-radius:3px;margin-bottom:.4rem;cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.pi.sel{border-color:#e07b39;background:#1a1200;}
-.pichk{width:16px;height:16px;border-radius:2px;border:1px solid #2a2a2a;background:#1a1a1a;display:flex;align-items:center;justify-content:font-size:.62rem;flex-shrink:0;}
-.pi.sel .pichk{background:#e07b39;border-color:#e07b39;color:#000;}
-.pi-id{font-size:.58rem;color:#444;width:44px;flex-shrink:0;}
-.pi-title{font-family:'Archivo',sans-serif;font-weight:600;font-size:.72rem;color:#ccc;flex:1;min-width:0;}
-.pi-pts{font-size:.65rem;color:#555;flex-shrink:0;}
-
-/* RETRO */
-.retro-grid{display:grid;grid-template-columns:1fr;gap:.75rem;}
-@media(min-width:600px){.retro-grid{grid-template-columns:repeat(3,1fr);}}
-.rcol{background:#0f0f0f;border:1px solid #1c1c1c;border-radius:3px;padding:.9rem;}
-.rcol-h{font-family:'Archivo',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.65rem;}
-.rh-g{color:#4ade80;}.rh-a{color:#e07b39;}.rh-b{color:#60a5fa;}
-.ritem{display:flex;align-items:flex-start;gap:.45rem;font-size:.7rem;color:#888;line-height:1.5;padding:.35rem 0;border-bottom:1px solid #161616;}
-.ritem:last-child{border-bottom:none;}
-.ritem::before{content:'â';color:#333;flex-shrink:0;}
+.t-meta{display:flex;gap:.25rem;flex-wrnk:0;}
 
 /* BLOCKERS */
 .blk-item{background:#1a0a0a;border-left:2px solid #7f1d1d;padding:.5rem .7rem;font-size:.7rem;color:#f87171;line-height:1.5;margin-bottom:.4rem;border-radius:0 3px 3px 0;}
@@ -326,7 +282,7 @@ body{background:#0d0d0d;}
 .feed-add{font-size:.65rem;color:#333;background:none;border:none;cursor:pointer;padding:.2rem 0;}
 .feed-add:hover{color:#888;}
 
-/* ââ AI CODE EDITOR âââââââââââââââââââââââââââââââââââââââââââââââ */
+/* ── AI CODE EDITOR ─────────────────────────────────────────────── */
 .chat-history{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1rem;max-height:62vh;overflow-y:auto;padding:.25rem 0;scroll-behavior:smooth;}
 .chat-msg{display:flex;flex-direction:column;gap:.25rem;}
 .chat-msg.user{align-items:flex-end;}
@@ -380,45 +336,45 @@ body{background:#0d0d0d;}
 `;
 
 const AGENTS_DEFAULT = [
-  {id:"analytics", name:"Analytics", emoji:"ð", active:true,  desc:"Tracks platform metrics and feeds the daily standup"},
-  {id:"research",  name:"Research",  emoji:"ð", active:true,  desc:"Market scans, competitor tracking, prospect discovery"},
-  {id:"outreach",  name:"Outreach",  emoji:"ð£", active:true,  desc:"Drafts cold emails and outreach campaigns for approval"},
-  {id:"product",   name:"Product",   emoji:"ð§", active:true,  desc:"Creates feature specs from feedback; triages the backlog"},
-  {id:"finance",   name:"Finance",   emoji:"ð°", active:true,  desc:"Monitors user financials and triggers critical alerts"},
-  {id:"support",   name:"Support",   emoji:"ð", active:true,  desc:"Catches churn risk and routes feedback to Product"},
-  {id:"onboarding",name:"Onboarding",emoji:"ð", active:true,  desc:"Handles new-signup checklists and activation flows"},
-  {id:"strategy",  name:"Strategy",  emoji:"â", active:false, desc:"Long-term planning; feeds priorities into the backlog"},
+  {id:"analytics", name:"Analytics", emoji:"📊", active:true,  desc:"Tracks platform metrics and feeds the daily standup"},
+  {id:"research",  name:"Research",  emoji:"🔍", active:true,  desc:"Market scans, competitor tracking, prospect discovery"},
+  {id:"outreach",  name:"Outreach",  emoji:"📣", active:true,  desc:"Drafts cold emails and outreach campaigns for approval"},
+  {id:"product",   name:"Product",   emoji:"🔧", active:true,  desc:"Creates feature specs from feedback; triages the backlog"},
+  {id:"finance",   name:"Finance",   emoji:"💰", active:true,  desc:"Monitors user financials and triggers critical alerts"},
+  {id:"support",   name:"Support",   emoji:"🛟", active:true,  desc:"Catches churn risk and routes feedback to Product"},
+  {id:"onboarding",name:"Onboarding",emoji:"🚀", active:true,  desc:"Handles new-signup checklists and activation flows"},
+  {id:"strategy",  name:"Strategy",  emoji:"♟", active:false, desc:"Long-term planning; feeds priorities into the backlog"},
 ];
 
 const FEEDS_IN_DEFAULT = [
-  "User feedback â Support â Product â Backlog",
-  "Market changes â Research â Backlog + Outreach queue",
-  "User financials â Finance â Strategy â Dashboard updates",
-  "Platform metrics â Analytics â Your daily standup",
+  "User feedback → Support → Product → Backlog",
+  "Market changes → Research → Backlog + Outreach queue",
+  "User financials → Finance → Strategy → Dashboard updates",
+  "Platform metrics → Analytics → Your daily standup",
 ];
 
 const FEEDS_OUT_DEFAULT = [
-  "Approved outreach emails â sent to prospects",
-  "Approved feature specs â Sprint backlog â Development",
-  "Approved financial alerts â user dashboard",
-  "Approved intel â competitor tabs refresh",
+  "Approved outreach emails → sent to prospects",
+  "Approved feature specs → Sprint backlog → Development",
+  "Approved financial alerts → user dashboard",
+  "Approved intel → competitor tabs refresh",
 ];
 
-// ââ HELPERS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 const PC = {P0:"p-r",P1:"p-a",P2:"p-b",P3:"p-x"};
 const SC = {"Backlog":"p-x","In Progress":"p-a","Done":"p-g","Blocked":"p-r"};
 const TC = {"Feature":"p-b","Bug":"p-r","Improvement":"p-a"};
 
 const NAV = [
-  {id:"overview",  icon:"â¬", label:"Overview"},
-  {id:"standup",   icon:"âï¸", label:"Daily Standup",   count:2},
-  {id:"board",     icon:"ð", label:"Sprint Board"},
-  {id:"review",    icon:"â", label:"Review Queue",    count:5},
-  {id:"planning",  icon:"ðï¸", label:"Sprint Planning"},
-  {id:"retro",     icon:"ð", label:"Retrospective"},
-  {id:"backlog",   icon:"ð¦", label:"Product Backlog"},
-  {id:"flow",      icon:"â»ï¸", label:"Agent Loop"},
-  {id:"ai",        icon:"ð¤", label:"AI Assistant"},
+  {id:"overview",  icon:"⬛", label:"Overview"},
+  {id:"standup",   icon:"☀️", label:"Daily Standup",   count:2},
+  {id:"board",     icon:"📋", label:"Sprint Board"},
+  {id:"review",    icon:"✅", label:"Review Queue",    count:5},
+  {id:"planning",  icon:"🗓️", label:"Sprint Planning"},
+  {id:"retro",     icon:"🔄", label:"Retrospective"},
+  {id:"backlog",   icon:"📦", label:"Product Backlog"},
+  {id:"flow",      icon:"♻️", label:"Agent Loop"},
+  {id:"ai",        icon:"🤖", label:"AI Assistant"},
 ];
 
 export default function App() {
@@ -427,14 +383,14 @@ export default function App() {
   const [backlog,setBacklog]     = useState(BACKLOG);
   const [rstates,setRstates]     = useState({});
   const [selected,setSelected]   = useState([]);
-  const [seDay,setSeDay]         = useState(0);
+  const [sdDay,setSdDay]         = useState(0);
   const [agents,setAgents]       = useState(AGENTS_DEFAULT);
   const [feedsIn,setFeedsIn]     = useState(FEEDS_IN_DEFAULT);
   const [feedsOut,setFeedsOut]   = useState(FEEDS_OUT_DEFAULT);
   const [showConfig,setShowConfig] = useState(false);
   const [emojiEdit,setEmojiEdit] = useState(null);
 
-  // ââ AI CODE EDITOR STATE ââ
+  // ── AI CODE EDITOR STATE ──
   const [aiInput,setAiInput]     = useState("");
   const [aiRun,setAiRun]         = useState(false);
   const [aiMessages,setAiMessages] = useState([]);
@@ -461,13 +417,13 @@ export default function App() {
   const deleteAgent = id => setAgents(a=>a.filter(ag=>ag.id!==id));
   const addAgent    = () => {
     const id = "agent-"+Date.now();
-    setAgents(a=>[...a,{id,name:"New Agent",emoji:"ð¤",active:true,desc:"Describe what this agent does"}]);
+    setAgents(a=>[...a,{id,name:"New Agent",emoji:"🤖",active:true,desc:"Describe what this agent does"}]);
   };
   const updateFeed = (list,setList,i,val) => setList(l=>l.map((x,j)=>j===i?val:x));
   const deleteFeed = (list,setList,i)     => setList(l=>l.filter((_,j)=>j!==i));
-  const addFeed    = (setList)            => setList(l=>[...l,"New connection â destination"]);
+  const addFeed    = (setList)            => setList(l=>[...l,"New connection → destination"]);
 
-  // ââ AI SEND âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+  // ── AI SEND ───────────────────────────────────────────────────────────────
   const sendMessage = async () => {
     if (!aiInput.trim() || aiRun) return;
     const userText = aiInput.trim();
@@ -541,9 +497,111 @@ export default function App() {
 
         {/* TOP BAR */}
         <div className="bar">
-          <button className="nav-toggle" onClick={()=>setMenuOpen(!menuOpen)}>â°</button>
+          <button className="nav-toggle" onClick={()=>setMenuOpen(!menuOpen)}>☰</button>
           <div className="logo">Trade<b>Stack</b> <span style={{color:"#444",fontSize:".6rem",fontWeight:300}}>/ Admin</span></div>
-          <div className="sbadge"><div className="sdot"/>S{SPRINT.num} Â· Day {SPRINT.dayElapsed}/{SPRINT.dayTotal}</div>
+          <div className="sbadge"><div className="sdot"/>S{SPRINT.num} · Day {SPRINT.dayElapsed}/{SPRINT.dayTotal}</div>
+        </div>
+
+        {/* OVERLAY */}
+        <div className={`overlay ${menuOpen?"show":""}`} onClick={()=>setMenuOpen(false)}/>
+
+        <div className="layout">
+
+          {/* SIDEBAR */}
+          <div className={`sidebar ${me REVIEW_ITEMS.filter(r=>!rstates[r.id]||rstates[r.id]==="Pending").length;
+  const blockers    = STANDUPS[0].agents.filter(a=>a.blocker);
+
+  const toggleSel    = id => setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
+  const commitSprint = () => { setBacklog(bl=>bl.map(b=>selected.includes(b.id)?{...b,sprint:2,status:"In Progress"}:b)); setSelected([]); };
+
+  const toggleAgent = id => setAgents(a=>a.map(ag=>ag.id===id?{...ag,active:!ag.active}:ag));
+  const updateAgent = (id,field,val) => setAgents(a=>a.map(ag=>ag.id===id?{...ag,[field]:val}:ag));
+  const deleteAgent = id => setAgents(a=>a.filter(ag=>ag.id!==id));
+  const addAgent    = () => {
+    const id = "agent-"+Date.now();
+    setAgents(a=>[...a,{id,name:"New Agent",emoji:"🤖",active:true,desc:"Describe what this agent does"}]);
+  };
+  const updateFeed = (list,setList,i,val) => setList(l=>l.map((x,j)=>j===i?val:x));
+  const deleteFeed = (list,setList,i)     => setList(l=>l.filter((_,j)=>j!==i));
+  const addFeed    = (setList)            => setList(l=>[...l,"New connection → destination"]);
+
+  // ── AI SEND ───────────────────────────────────────────────────────────────
+  const sendMessage = async () => {
+    if (!aiInput.trim() || aiRun) return;
+    const userText = aiInput.trim();
+    setAiInput("");
+    setAiRun(true);
+
+    const newUserMsg = { role:"user", content:userText };
+    const history = [...aiMessages, newUserMsg];
+    setAiMessages(history);
+
+    // Build API messages from history
+    const apiMsgs = history.map(m => ({ role:m.role, content:m.content }));
+
+    try {
+      let response = await callClaude(AI_SYS, apiMsgs);
+      let workingApiMsgs = [...apiMsgs, { role:"assistant", content:response }];
+
+      // Handle FILE_REQUEST lines
+      const fileReqs = parseFileRequests(response);
+      if (fileReqs.length > 0) {
+        const parts = [];
+        for (const req of fileReqs) {
+          try {
+            const content = await ghRead(req.repo, req.path);
+            parts.push(`\n\nFile: ${req.repo}/${req.path}\n\`\`\`jsx\n${content}\n\`\`\``);
+          } catch(e) {
+            parts.push(`\n\n[Could not read ${req.repo}/${req.path}: ${e.message}]`);
+          }
+        }
+        const fileMsg = `Here are the files you requested:${parts.join("")}\n\nNow please provide your changes.`;
+        workingApiMsgs = [...workingApiMsgs, { role:"user", content:fileMsg }];
+        response = await callClaude(AI_SYS, workingApiMsgs);
+      }
+
+      const edits   = parseEdits(response);
+      const display = stripEdits(response);
+
+      setAiMessages(prev => [...prev, {
+        role:"assistant",
+        content:response,
+        display,
+        edits,
+      }]);
+    } catch(e) {
+      setAiMessages(prev => [...prev, {
+        role:"assistant",
+        content:`Error: ${e.message}`,
+        display:`Error: ${e.message}`,
+        edits:[],
+      }]);
+    }
+    setAiRun(false);
+  };
+
+  const applyEdit = async (edit, key) => {
+    setEditStatus(s=>({...s,[key]:"applying"}));
+    try {
+      await ghWrite(edit.repo, edit.path, edit.content, edit.commit);
+      setEditStatus(s=>({...s,[key]:"done"}));
+    } catch(e) {
+      setEditStatus(s=>({...s,[key]:"err:"+e.message}));
+    }
+  };
+
+  const resetChat = () => { setAiMessages([]); setEditStatus({}); setAiInput(""); };
+
+  return (
+    <>
+      <style>{CSS}</style>
+      <div className="app">
+
+        {/* TOP BAR */}
+        <div className="bar">
+          <button className="nav-toggle" onClick={()=>setMenuOpen(!menuOpen)}>☰</button>
+          <div className="logo">Trade<b>Stack</b> <span style={{color:"#444",fontSize:".6rem",fontWeight:300}}>/ Admin</span></div>
+          <div className="sbadge"><div className="sdot"/>S{SPRINT.num} · Day {SPRINT.dayElapsed}/{SPRINT.dayTotal}</div>
         </div>
 
         {/* OVERLAY */}
@@ -569,7 +627,7 @@ export default function App() {
             {/* OVERVIEW */}
             {view==="overview"&&<>
               <div className="sh"><div className="st">Sprint {SPRINT.num} Overview</div><div className="sl"/></div>
-              <div className="ss">{SPRINT.start} â {SPRINT.end} Â· You are Scrum Master</div>
+              <div className="ss">{SPRINT.start} → {SPRINT.end} · You are Scrum Master</div>
               <div className="g4" style={{marginBottom:"1rem"}}>
                 {[
                   {v:"7",l:"Active Users",d:"+2 this week",up:true},
@@ -586,8 +644,39 @@ export default function App() {
               </div>
               <div className="card" style={{marginBottom:"1rem"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:".4rem"}}>
-                  <span style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"w#888"}}>Sprint Progress</span>
-                  <span style={{fontSize:".65rem",color:"#e07b39"}}>{passName="ss">Each agent reports: what they did, doing, and what's blocking them</div>
+                  <span style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888"}}>Sprint Progress</span>
+                  <span style={{fontSize:".65rem",color:"#e07b39"}}>{pct}% elapsed · {Math.round((donePts/totalPts)*100)}% done</span>
+                </div>
+                <div className="sbar-wrap"><div className="sbar-fill" style={{width:`${pct}%`}}/></div>
+                <div className="tick-row">
+                  {sprintItems.map(t=>(
+                    <div key={t.id} className="tick" style={{background:t.status==="Done"?"#4ade80":t.status==="In Progress"?"#e07b39":"#2a2a2a"}} title={t.title}/>
+                  ))}
+                </div>
+              </div>
+              <div className="g2">
+                <div className="card">
+                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Today's Blockers</div>
+                  {blockers.length===0
+                    ? <div style={{color:"#4ade80",fontSize:".7rem"}}>No blockers</div>
+                    : blockers.map((a,i)=><div key={i} className="blk-item"><strong style={{color:"#f87171"}}>{a.name}:</strong> {a.blocker}</div>)}
+                </div>
+                <div className="card">
+                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Sprint Goals</div>
+                  {sprintItems.map(t=>(
+                    <div key={t.id} style={{display:"flex",alignItems:"flex-start",gap:".45rem",marginBottom:".35rem"}}>
+                      <span style={{fontSize:".7rem",flexShrink:0}}>{t.status==="Done"?"[x]":t.status==="In Progress"?"[~]":"[ ]"}</span>
+                      <span style={{fontSize:".7rem",color:t.status==="Done"?"#4ade80":"#888",lineHeight:1.4}}>{t.title}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>}
+
+            {/* STANDUP */}
+            {view==="standup"&&<>
+              <div className="sh"><div className="st">Daily Standup</div><div className="sl"/></div>
+              <div className="ss">Each agent reports: what they did, doing, and what's blocking them</div>
               <div className="sdup-tabs">
                 {STANDUPS.map((s,i)=><button key={i} className={`sdup-tab ${sdDay===i?"on":""}`} onClick={()=>setSdDay(i)}>{s.date}</button>)}
               </div>
@@ -609,7 +698,7 @@ export default function App() {
             {/* BOARD */}
             {view==="board"&&<>
               <div className="sh"><div className="st">Sprint Board</div><div className="sl"/></div>
-              <div className="ss">Sprint {SPRINT.num} â scroll right to see all columns</div>
+              <div className="ss">Sprint {SPRINT.num} — scroll right to see all columns</div>
               <div className="board-wrap">
                 <div className="board">
                   {["Backlog","In Progress","Review","Done"].map(col=>{
@@ -661,7 +750,7 @@ export default function App() {
                             <button className="brej" onClick={()=>setRstates(s=>({...s,[item.id]:"Rejected"}))}>Reject</button>
                             <button className="bedt">Edit</button></>
                         : <span style={{fontSize:".65rem",color:state==="Approved"?"#4ade80":"#f87171"}}>
-                            {state==="Approved"?"Approved â queued for action":"Rejected â returned to agent"}
+                            {state==="Approved"?"Approved — queued for action":"Rejected — returned to agent"}
                           </span>}
                     </div>
                   </div>
@@ -672,29 +761,29 @@ export default function App() {
             {/* PLANNING */}
             {view==="planning"&&<>
               <div className="sh"><div className="st">Sprint Planning</div><div className="sl"/></div>
-              <div className="ss">Select backlog items for Sprint 2. You set scope â agents execute.</div>
+              <div className="ss">Select backlog items for Sprint 2. You set scope — agents execute.</div>
               <div className="card" style={{marginBottom:"1rem"}}>
-                <div style={{fontFamily:"trchivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".25rem"}}>
-                  Sprint 2 Â· Selected: {selected.reduce((a,id)=>a+(backlog.find(b=>b.id===id)?.pts||0),0)} story points
+                <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".25rem"}}>
+                  Sprint 2 · Selected: {selected.reduce((a,id)=>a+(backlog.find(b=>b.id===id)?.pts||0),0)} story points
                 </div>
-                <div style={{fontSize:".68rem",color:"w555"}}>Sprint 1 velocity: {donePts} pts. Match or go slightly under.</div>
+                <div style={{fontSize:".68rem",color:"#555"}}>Sprint 1 velocity: {donePts} pts. Match or go slightly under.</div>
               </div>
               {backlog.filter(b=>!b.sprint).sort((a,b)=>a.priority.localeCompare(b.priority)).map(item=>(
                 <div key={item.id} className={`pi ${selected.includes(item.id)?"sel":""}`} onClick={()=>toggleSel(item.id)}>
-                  <div className="pichk">{selected.includes(item.id)?"â":""}</div>
+                  <div className="pichk">{selected.includes(item.id)?"✓":""}</div>
                   <div className="pi-id">{item.id}</div>
                   <div className="pi-title">{item.title}</div>
                   <span className={`pill ${PC[item.priority]}`}>{item.priority}</span>
                   <div className="pi-pts">{item.pts}pt</div>
                 </div>
               ))}
-              {selected.length>0&&<button className="btn-run" style={{marginTop:".75rem"}} onClick={commitSprint}>Commit {selected.length} Items to Sprint 2 â</button>}
+              {selected.length>0&&<button className="btn-run" style={{marginTop:".75rem"}} onClick={commitSprint}>Commit {selected.length} Items to Sprint 2 →</button>}
             </>}
 
             {/* RETRO */}
             {view==="retro"&&<>
               <div className="sh"><div className="st">Retrospective</div><div className="sl"/></div>
-              <div className="ss">Sprint {SPRINT.num} reflection â what worked, what broke, what changes next sprint</div>
+              <div className="ss">Sprint {SPRINT.num} reflection — what worked, what broke, what changes next sprint</div>
               <div className="retro-grid">
                 {RETRO.map((col,i)=>(
                   <div key={i} className="rcol">
@@ -724,7 +813,7 @@ export default function App() {
             {/* AGENT LOOP */}
             {view==="flow"&&<>
               <div className="sh"><div className="st">Circular Agent Loop</div><div className="sl"/></div>
-              <div className="ss">Agents feed each other every sprint â nothing terminates, everything loops back into the backlog</div>
+              <div className="ss">Agents feed each other every sprint — nothing terminates, everything loops back into the backlog</div>
               <div className="card" style={{marginBottom:".75rem"}}>
                 <div className="flow">
                   {agents.map((ag,i)=>[
@@ -732,23 +821,23 @@ export default function App() {
                       <div className="fn-e">{ag.emoji}</div>
                       <div className="fn-n">{ag.name}</div>
                     </div>,
-                    i<agents.length-1&&<div key={ag.id+"-arr"} className="farrow">â</div>
+                    i<agents.length-1&&<div key={ag.id+"-arr"} className="farrow">→</div>
                   ])}
-                  {agents.length>1&&<div className="farrow">â©</div>}
-                  <div className="fn own"><div className="fn-e">ð§</div><div className="fn-n">You (SM)</div></div>
+                  {agents.length>1&&<div className="farrow">↩</div>}
+                  <div className="fn own"><div className="fn-e">🧑</div><div className="fn-n">You (SM)</div></div>
                 </div>
               </div>
               <div className="ag-toggle">
                 <button className={`ag-toggle-btn ${showConfig?"active":""}`} onClick={()=>setShowConfig(s=>!s)}>
-                  {showConfig?"â² Hide Config":"â Configure Agents"}
+                  {showConfig?"▲ Hide Config":"⚙ Configure Agents"}
                 </button>
-                {showConfig&&<span style={{fontSize:".62rem",color:"#555"}}>Click any field to edit Â· Changes update the loop above</span>}
+                {showConfig&&<span style={{fontSize:".62rem",color:"#555"}}>Click any field to edit · Changes update the loop above</span>}
               </div>
               {showConfig&&<>
                 <div className="card" style={{marginBottom:".75rem"}}>
                   <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".75rem",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                     Agents
-                    <span style={{fontSize:".6rem",color:"#444",fontFamily:"'Inconsolata',monospace",fontWeight:300}}>{agents.filter(a=>a.active).length} active Â· {agents.filter(a=>!a.active).length} inactive</span>
+                    <span style={{fontSize:".6rem",color:"#444",fontFamily:"'Inconsolata',monospace",fontWeight:300}}>{agents.filter(a=>a.active).length} active · {agents.filter(a=>!a.active).length} inactive</span>
                   </div>
                   {agents.map(ag=>(
                     <div key={ag.id} className={`ag-row ${!ag.active?"inactive":""}`}>
@@ -765,7 +854,7 @@ export default function App() {
                         <input type="checkbox" checked={ag.active} onChange={()=>toggleAgent(ag.id)}/>
                         <span className="ag-slider"/>
                       </label>
-                      <button className="ag-del" title="Remove agent" onClick={()=>deleteAgent(ag.id)}>â</button>
+                      <button className="ag-del" title="Remove agent" onClick={()=>deleteAgent(ag.id)}>✕</button>
                     </div>
                   ))}
                   <button className="ag-add" onClick={addAgent}>+ Add Agent</button>
@@ -775,9 +864,9 @@ export default function App() {
                     <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Feeds INTO the loop</div>
                     {feedsIn.map((item,i)=>(
                       <div key={i} className="feed-item">
-                        <span style={{color:"#333",fontSize:".7rem",flexShrink:0}}>â</span>
+                        <span style={{color:"#333",fontSize:".7rem",flexShrink:0}}>→</span>
                         <input className="feed-input" value={item} onChange={e=>updateFeed(feedsIn,setFeedsIn,i,e.target.value)}/>
-                        <button className="feed-del" onClick={()=>deleteFeed(feedsIn,setFeedsIn,i)}>â</button>
+                        <button className="feed-del" onClick={()=>deleteFeed(feedsIn,setFeedsIn,i)}>✕</button>
                       </div>
                     ))}
                     <button className="feed-add" onClick={()=>addFeed(setFeedsIn)}>+ Add input</button>
@@ -786,9 +875,9 @@ export default function App() {
                     <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Feeds OUT of the loop</div>
                     {feedsOut.map((item,i)=>(
                       <div key={i} className="feed-item">
-                        <span style={{color:"#333",fontSize:".7rem",flexShrink:0}}>â</span>
+                        <span style={{color:"#333",fontSize:".7rem",flexShrink:0}}>→</span>
                         <input className="feed-input" value={item} onChange={e=>updateFeed(feedsOut,setFeedsOut,i,e.target.value)}/>
-                        <button className="feed-del" onClick={()=>deleteFeed(feedsOut,setFeedsOut,i)}>â</button>
+                        <button className="feed-del" onClick={()=>deleteFeed(feedsOut,setFeedsOut,i)}>✕</button>
                       </div>
                     ))}
                     <button className="feed-add" onClick={()=>addFeed(setFeedsOut)}>+ Add output</button>
@@ -802,7 +891,7 @@ export default function App() {
                 ].map((col,i)=>(
                   <div key={i} className="card">
                     <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>{col.title}</div>
-                    {col.items.map((it,j)=><div key={j} style={{display:"flex",gap:".4rem",fontSize:".7rem",color:"#777",lineHeight:1.55,marginBottom:".3rem"}}><span style={{color:"#333"}}>â</span>{it}</div>)}
+                    {col.items.map((it,j)=><div key={j} style={{display:"flex",gap:".4rem",fontSize:".7rem",color:"#777",lineHeight:1.55,marginBottom:".3rem"}}><span style={{color:"#333"}}>→</span>{it}</div>)}
                   </div>
                 ))}
               </div>}
@@ -815,7 +904,7 @@ export default function App() {
                 <div className="sl"/>
               </div>
               <div className="ss">
-                Chat with Claude to edit this admin or the main TradeStack site. Changes push live to GitHub â Vercel builds in ~10s.
+                Chat with Claude to edit this admin or the main TradeStack site. Changes push live to GitHub — Vercel builds in ~10s.
                 {GH_TOKEN
                   ? <span className="gh-pill ok"><span className="gh-dot"/>GitHub connected</span>
                   : <span className="gh-pill no"><span className="gh-dot"/>Add VITE_GITHUB_TOKEN in Vercel to enable pushes</span>}
@@ -850,14 +939,14 @@ export default function App() {
                                 disabled={!GH_TOKEN||isApplying||isDone}
                                 onClick={()=>applyEdit(edit,key)}
                               >
-                                {isDone?"â Applied":isApplying?"Pushingâ¦":"â Push to GitHub"}
+                                {isDone?"✓ Applied":isApplying?"Pushing…":"↑ Push to GitHub"}
                               </button>
                               {st&&(
                                 <span className={`edit-stat ${isDone?"done":isApplying?"applying":isErr?"err":""}`}>
-                                  {isDone?"Vercel is buildingâ¦":isApplying?"":isErr?st.replace("err:",""):st}
+                                  {isDone?"Vercel is building…":isApplying?"":isErr?st.replace("err:",""):st}
                                 </span>
                               )}
-                              {!AH_TOKEN&&<span className="edit-stat" style={{color:"#555"}}>Add VITE_GITHUB_TOKEN to push</span>}
+                              {!GH_TOKEN&&<span className="edit-stat" style={{color:"#555"}}>Add VITE_GITHUB_TOKEN to push</span>}
                             </div>
                           </div>
                         );
@@ -867,7 +956,7 @@ export default function App() {
                   {aiRun&&(
                     <div className="chat-msg assistant">
                       <span className="chat-who">Claude</span>
-                      <div className="chat-thinking">Thinkingâ¦</div>
+                      <div className="chat-thinking">Thinking…</div>
                     </div>
                   )}
                   <div ref={chatBottomRef}/>
@@ -881,20 +970,20 @@ export default function App() {
                     className="chat-textarea"
                     rows={2}
                     placeholder={aiMessages.length===0
-                      ? "Try: \"Fix the emoji encoding corruption in the admin\"\nOr: \"Make the main site text more readable â better contrast\"\nOr: \"The desktop layout is too zoomed out, fix it\""
-                      : "Continue the conversationâ¦"}
+                      ? "Try: \"Fix the emoji encoding corruption in the admin\"\nOr: \"Make the main site text more readable — better contrast\"\nOr: \"The desktop layout is too zoomed out, fix it\""
+                      : "Continue the conversation…"}
                     value={aiInput}
                     onChange={e=>setAiInput(e.target.value)}
                     onKeyDown={e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){e.preventDefault();sendMessage();}}}
                   />
                   <button className="btn-send" disabled={aiRun||!aiInput.trim()} onClick={sendMessage}>
-                    {aiRun?"â¦":"Send"}
+                    {aiRun?"…":"Send"}
                   </button>
                 </div>
                 <div className="chat-meta">
-                  <span className="chat-hint">Cmd+Enter to send Â· Claude reads files from GitHub automatically</span>
+                  <span className="chat-hint">Cmd+Enter to send · Claude reads files from GitHub automatically</span>
                   {aiMessages.length>0&&(
-                    <button className="btn-new-chat" onClick={resetChat}>âº New chat</button>
+                    <button className="btn-new-chat" onClick={resetChat}>↺ New chat</button>
                   )}
                 </div>
               </div>
