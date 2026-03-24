@@ -681,7 +681,7 @@ export default function App() {
                         <div className="ri-title">{item.title}</div>
                         <div className="ri-meta">
                           <span className="pill p-x">{item.agent} Agent</span>
-                          <span className={`pill ${item.urgency==="High"?"p-r":"p-x";}`}>{item.urgency}</span>
+                          <span className={`pill ${item.urgency==="High"?"p-r":"p-x"}`}>{item.urgency}</span>
                         </div>
                       </div>
                     </div>
