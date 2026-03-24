@@ -14,7 +14,7 @@ async function callClaude(system, user) {
   return (await res.json()).content?.[0]?.text || "";
 }
 
-// -- DATA ----------------------------------------------------------------------
+// ââ DATA ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const SPRINT = { num:1, start:"Mar 16", end:"Mar 30", dayElapsed:6, dayTotal:14 };
 
 const BACKLOG = [
@@ -33,37 +33,37 @@ const BACKLOG = [
 ];
 
 const STANDUPS = [
-  { date:"Mar 22 . Today", agents:[
-    {name:"Research",emoji:"[*]",s:"green",update:"Completed competitor refresh for 3 users. Flagged new competitor: Apex Mechanical (opened Nov 2025).",blocker:null},
-    {name:"Analytics",emoji:"[*]",s:"green",update:"7 active users this week, 2 new signups. Avg session 8.2min. Competitor tab has 3x more views than Financial tab.",blocker:null},
-    {name:"Outreach",emoji:"[*]",s:"amber",update:"4 emails drafted and queued for owner approval. 0 sent - awaiting review.",blocker:"Approval queue has 4 items pending 3+ days."},
-    {name:"Product",emoji:"[*]",s:"green",update:"Triaged 6 feedback items. 2 escalated to backlog. 4 resolved as FAQ updates.",blocker:null},
-    {name:"Finance",emoji:"[*]",s:"green",update:"Re-ran analysis for 2 users who updated financials. 1 critical drain flagged (user #4, op-ex 68%).",blocker:null},
-    {name:"Support",emoji:"[*]",s:"red",update:"1 frustrated user - said competitor tab 'feels like fake data'. Risk of churn.",blocker:"PB-02 unresolved - causing repeat complaints."},
+  { date:"Mar 22 Â· Today", agents:[
+    {name:"Research",emoji:"ð",s:"green",update:"Completed competitor refresh for 3 users. Flagged new competitor: Apex Mechanical (opened Nov 2025).",blocker:null},
+    {name:"Analytics",emoji:"ð",s:"green",update:"7 active users this week, 2 new signups. Avg session 8.2min. Competitor tab has 3Ã more views than Financial tab.",blocker:null},
+    {name:"Outreach",emoji:"ð£",s:"amber",update:"4 emails drafted and queued for owner approval. 0 sent â awaiting review.",blocker:"Approval queue has 4 items pending 3+ days."},
+    {name:"Product",emoji:"ð§",s:"green",update:"Triaged 6 feedback items. 2 escalated to backlog. 4 resolved as FAQ updates.",blocker:null},
+    {name:"Finance",emoji:"ð°",s:"green",update:"Re-ran analysis for 2 users who updated financials. 1 critical drain flagged (user #4, op-ex 68%).",blocker:null},
+    {name:"Support",emoji:"ð",s:"red",update:"1 frustrated user â said competitor tab 'feels like fake data'. Risk of churn.",blocker:"PB-02 unresolved â causing repeat complaints."},
   ]},
   { date:"Mar 21", agents:[
-    {name:"Research",emoji:"[*]",s:"green",update:"Weekly market scan complete. 3 new prospects added to outreach queue.",blocker:null},
-    {name:"Analytics",emoji:"[*]",s:"green",update:"Signup-to-setup completion: 71%. 2 users dropped at financial data entry.",blocker:null},
-    {name:"Outreach",emoji:"[*]",s:"green",update:"Drafted 3 cold emails. Delivered to approval queue.",blocker:null},
-    {name:"Support",emoji:"[*]",s:"green",update:"2 feedback items: 1 feature request (PDF export), 1 positive. Both routed to Product Agent.",blocker:null},
+    {name:"Research",emoji:"ð",s:"green",update:"Weekly market scan complete. 3 new prospects added to outreach queue.",blocker:null},
+    {name:"Analytics",emoji:"ð",s:"green",update:"Signup-to-setup completion: 71%. 2 users dropped at financial data entry.",blocker:null},
+    {name:"Outreach",emoji:"ð£",s:"green",update:"Drafted 3 cold emails. Delivered to approval queue.",blocker:null},
+    {name:"Support",emoji:"ð",s:"green",update:"2 feedback items: 1 feature request (PDF export), 1 positive. Both routed to Product Agent.",blocker:null},
   ]},
 ];
 
 const REVIEW_ITEMS = [
-  {id:"R-01",agent:"Outreach",emoji:"[*]",title:"Cold email - Castle Home Repair LLC",urgency:"Normal",preview:`Subject: Quick question about your schedule\n\nHey - saw Castle Home Repair on Yelp. Honest question: are you spending more time answering calls and chasing invoices than actually doing repairs?\n\nWe built a free tool that shows trades businesses exactly where they're losing money. 10 minutes to set up. Free for 90 days, no card.\n\nWorth a look?`},
-  {id:"R-02",agent:"Outreach",emoji:"[*]",title:"Cold email - J&T Painting",urgency:"Normal",preview:`Subject: Quick question for J&T\n\nRunning a painting crew means you're the estimator, scheduler, bookkeeper, and HR department all at once. We made something that shows you exactly where that's costing you money.\n\nFree for 90 days, 10 minutes to set up.\n\nInterested?`},
-  {id:"R-03",agent:"Product",emoji:"[*]",title:"Feature Spec: Competitor real data (PB-02)",urgency:"High",preview:`P0 - Critical\nProblem: Users recognize competitor data as AI estimates, not real businesses. Causing trust loss.\nSolution: Integrate web search - pull real business names, ratings, review counts from Google/Yelp API.\nSuccess metric: 0 "fake data" complaints within 14 days of ship.\nEffort: 3-5 days dev.`},
-  {id:"R-04",agent:"Finance",emoji:"[*]",title:"Alert: User #4 critical drain",urgency:"High",preview:`User: Apex Handyman (Mike R.)\nOp-ex ratio: 68% - industry avg is 38-45%.\nLikely cause: Vehicle/fuel costs + tools not tracked per job.\nAction needed: Owner approval to surface this alert to the user's dashboard.`},
-  {id:"R-05",agent:"Research",emoji:"[*]",title:"New competitor: Apex Mechanical SC",urgency:"Normal",preview:`New business: Apex Mechanical, State College PA. Opened ~Nov 2025.\nEst. revenue: <$50K. Targeting HVAC + plumbing residential.\nThreat: Low now, Medium within 12 months.\nOpportunity: No online presence yet - your users can capture reviews first.`},
+  {id:"R-01",agent:"Outreach",emoji:"ð£",title:"Cold email â Castle Home Repair LLC",urgency:"Normal",preview:`Subject: Quick question about your schedule\n\nHey â saw Castle Home Repair on Yelp. Honest question: are you spending more time answering calls and chasing invoices than actually doing repairs?\n\nWe built a free tool that shows trades businesses exactly where they're losing money. 10 minutes to set up. Free for 90 days, no card.\n\nWorth a look?`},
+  {id:"R-02",agent:"Outreach",emoji:"ð£",title:"Cold email â J&T Painting",urgency:"Normal",preview:`Subject: Quick question for J&T\n\nRunning a painting crew means you're the estimator, scheduler, bookkeeper, and HR department all at once. We made something that shows you exactly where that's costing you money.\n\nFree for 90 days, 10 minutes to set up.\n\nInterested?`},
+  {id:"R-03",agent:"Product",emoji:"ð§",title:"Feature Spec: Competitor real data (PB-02)",urgency:"High",preview:`P0 â Critical\nProblem: Users recognize competitor data as AI estimates, not real businesses. Causing trust loss.\nSolution: Integrate web search â pull real business names, ratings, review counts from Google/Yelp API.\nSuccess metric: 0 "fake data" complaints within 14 days of ship.\nEffort: 3-5 days dev.`},
+  {id:"R-04",agent:"Finance",emoji:"ð°",title:"Alert: User #4 critical drain",urgency:"High",preview:`User: Apex Handyman (Mike R.)\nOp-ex ratio: 68% â industry avg is 38-45%.\nLikely cause: Vehicle/fuel costs + tools not tracked per job.\nAction needed: Owner approval to surface this alert to the user's dashboard.`},
+  {id:"R-05",agent:"Research",emoji:"ð",title:"New competitor: Apex Mechanical SC",urgency:"Normal",preview:`New business: Apex Mechanical, State College PA. Opened ~Nov 2025.\nEst. revenue: <$50K. Targeting HVAC + plumbing residential.\nThreat: Low now, Medium within 12 months.\nOpportunity: No online presence yet â your users can capture reviews first.`},
 ];
 
 const RETRO = [
-  {head:"ok Went Well",cls:"rh-g",items:["Onboarding checklist shipped on time","Analytics digest running clean","Support Agent caught churn risk on user #3 before they left"]},
-  {head:"! Needs Improvement",cls:"rh-a",items:["Approval queue backlog - 4 emails sat 3+ days","Competitor trust issue recurring - PB-02 should have been P0","No scope limit on Research Agent - over-delivered"]},
-  {head:"-> Sprint 2 Actions",cls:"rh-b",items:["Set 48hr SLA on all review queue items","PB-02 is Sprint 2 first priority","Define word-count limit for Research Agent outputs"]},
+  {head:"â Went Well",cls:"rh-g",items:["Onboarding checklist shipped on time","Analytics digest running clean","Support Agent caught churn risk on user #3 before they left"]},
+  {head:"â  Needs Improvement",cls:"rh-a",items:["Approval queue backlog â 4 emails sat 3+ days","Competitor trust issue recurring â PB-02 should have been P0","No scope limit on Research Agent â over-delivered"]},
+  {head:"â Sprint 2 Actions",cls:"rh-b",items:["Set 48hr SLA on all review queue items","PB-02 is Sprint 2 first priority","Define word-count limit for Research Agent outputs"]},
 ];
 
-// -- STYLES --------------------------------------------------------------------
+// ââ STYLES ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inconsolata:wght@300;400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -79,7 +79,7 @@ body{background:#0d0d0d;}
 .sdot{width:5px;height:5px;border-radius:50%;background:#e07b39;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-/* NAV - hamburger on mobile, sidebar on desktop */
+/* NAV â hamburger on mobile, sidebar on desktop */
 .nav-toggle{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:3px;cursor:pointer;font-size:1rem;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
 @media(min-width:768px){.nav-toggle{display:none;}}
 
@@ -125,7 +125,7 @@ body{background:#0d0d0d;}
 /* CARDS */
 .card{background:#111;border:1px solid #1c1c1c;border-radius:3px;padding:.9rem;}
 
-/* STATS GRID - 2 col mobile, 4 col desktop */
+/* STATS GRID â 2 col mobile, 4 col desktop */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;}
 .g4{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
@@ -150,7 +150,7 @@ body{background:#0d0d0d;}
 .p-b{background:#0a1020;color:#60a5fa;}
 .p-x{background:#1a1a1a;color:#555;}
 
-/* BOARD - horizontal scroll on mobile */
+/* BOARD â horizontal scroll on mobile */
 .board-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .board{display:grid;grid-template-columns:repeat(4,minmax(200px,1fr));gap:.65rem;min-width:820px;}
 .bcol{background:#0f0f0f;border:1px solid #1c1c1c;border-radius:3px;padding:.65rem;min-height:260px;}
@@ -203,7 +203,7 @@ body{background:#0d0d0d;}
 .rh-g{color:#4ade80;}.rh-a{color:#e07b39;}.rh-b{color:#60a5fa;}
 .ritem{display:flex;align-items:flex-start;gap:.45rem;font-size:.7rem;color:#888;line-height:1.5;padding:.35rem 0;border-bottom:1px solid #161616;}
 .ritem:last-child{border-bottom:none;}
-.ritem::before{content:'->';color:#333;flex-shrink:0;}
+.ritem::before{content:'â';color:#333;flex-shrink:0;}
 
 /* AI */
 .ai-in{width:100%;background:#0f0f0f;border:1px solid #1c1c1c;color:#ddd8ce;padding:.65rem .8rem;font-family:'Inconsolata',monospace;font-size:.8rem;outline:none;border-radius:3px;transition:border-color .15s;resize:vertical;min-height:80px;}
@@ -225,23 +225,78 @@ body{background:#0d0d0d;}
 
 /* BLOCKERS */
 .blk-item{background:#1a0a0a;border-left:2px solid #7f1d1d;padding:.5rem .7rem;font-size:.7rem;color:#f87171;line-height:1.5;margin-bottom:.4rem;border-radius:0 3px 3px 0;}
+
+/* AGENT CONFIG */
+.ag-toggle{display:flex;align-items:center;gap:.55rem;margin-bottom:1rem;}
+.ag-toggle-btn{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#1a1a1a;color:#888;border:1px solid #2a2a2a;padding:.38rem .75rem;cursor:pointer;border-radius:2px;transition:all .15s;}
+.ag-toggle-btn.active{background:#1a1200;color:#e07b39;border-color:#3a2800;}
+.ag-row{display:flex;align-items:center;gap:.55rem;padding:.6rem .75rem;background:#111;border:1px solid #1c1c1c;border-radius:3px;margin-bottom:.35rem;flex-wrap:wrap;}
+.ag-row.inactive{opacity:.45;}
+.ag-emoji-btn{font-size:1.1rem;background:none;border:none;cursor:pointer;padding:.1rem .25rem;border-radius:2px;transition:background .1s;}
+.ag-emoji-btn:hover{background:#222;}
+.ag-name-input{font-family:'Archivo',sans-serif;font-weight:700;font-size:.75rem;color:#ddd8ce;background:none;border:none;outline:none;width:90px;border-bottom:1px solid transparent;transition:border-color .15s;}
+.ag-name-input:focus{border-bottom-color:#e07b39;}
+.ag-desc-input{font-family:'Inconsolata',monospace;font-size:.68rem;color:#666;background:none;border:none;outline:none;flex:1;min-width:120px;border-bottom:1px solid transparent;transition:border-color .15s;}
+.ag-desc-input:focus{border-bottom-color:#333;color:#aaa;}
+.ag-switch{position:relative;width:30px;height:16px;flex-shrink:0;cursor:pointer;}
+.ag-switch input{opacity:0;width:0;height:0;position:absolute;}
+.ag-slider{position:absolute;inset:0;background:#2a2a2a;border-radius:8px;transition:.2s;}
+.ag-slider:before{content:"";position:absolute;width:10px;height:10px;left:3px;top:3px;background:#555;border-radius:50%;transition:.2s;}
+.ag-switch input:checked+.ag-slider{background:#2a1800;}
+.ag-switch input:checked+.ag-slider:before{background:#e07b39;transform:translateX(14px);}
+.ag-del{font-size:.7rem;background:none;border:none;color:#333;cursor:pointer;padding:.15rem .3rem;border-radius:2px;transition:color .1s;flex-shrink:0;}
+.ag-del:hover{color:#f87171;}
+.ag-add{font-family:'Archivo',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:#0f0f0f;color:#555;border:1px dashed #2a2a2a;padding:.5rem .75rem;cursor:pointer;border-radius:3px;width:100%;transition:all .15s;margin-top:.25rem;}
+.ag-add:hover{color:#ddd8ce;border-color:#444;}
+.feed-item{display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem;}
+.feed-input{font-family:'Inconsolata',monospace;font-size:.7rem;color:#777;background:none;border:none;outline:none;flex:1;border-bottom:1px solid transparent;transition:border-color .15s;padding:.1rem 0;}
+.feed-input:focus{border-bottom-color:#333;color:#aaa;}
+.feed-del{font-size:.65rem;background:none;border:none;color:#2a2a2a;cursor:pointer;flex-shrink:0;}
+.feed-del:hover{color:#f87171;}
+.feed-add{font-size:.65rem;color:#333;background:none;border:none;cursor:pointer;padding:.2rem 0;}
+.feed-add:hover{color:#888;}
 `;
 
-// -- HELPERS ------------------------------------------------------------------
+const AGENTS_DEFAULT = [
+  {id:"analytics", name:"Analytics", emoji:"ð", active:true,  desc:"Tracks platform metrics and feeds the daily standup"},
+  {id:"research",  name:"Research",  emoji:"ð", active:true,  desc:"Market scans, competitor tracking, prospect discovery"},
+  {id:"outreach",  name:"Outreach",  emoji:"ð£", active:true,  desc:"Drafts cold emails and outreach campaigns for approval"},
+  {id:"product",   name:"Product",   emoji:"ð§", active:true,  desc:"Creates feature specs from feedback; triages the backlog"},
+  {id:"finance",   name:"Finance",   emoji:"ð°", active:true,  desc:"Monitors user financials and triggers critical alerts"},
+  {id:"support",   name:"Support",   emoji:"ð", active:true,  desc:"Catches churn risk and routes feedback to Product"},
+  {id:"onboarding",name:"Onboarding",emoji:"ð", active:true,  desc:"Handles new-signup checklists and activation flows"},
+  {id:"strategy",  name:"Strategy",  emoji:"âï¸", active:false, desc:"Long-term planning; feeds priorities into the backlog"},
+];
+
+const FEEDS_IN_DEFAULT = [
+  "User feedback â Support â Product â Backlog",
+  "Market changes â Research â Backlog + Outreach queue",
+  "User financials â Finance â Strategy â Dashboard updates",
+  "Platform metrics â Analytics â Your daily standup",
+];
+
+const FEEDS_OUT_DEFAULT = [
+  "Approved outreach emails â sent to prospects",
+  "Approved feature specs â Sprint backlog â Development",
+  "Approved financial alerts â user dashboard",
+  "Approved intel â competitor tabs refresh",
+];
+
+// ââ HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const PC = {P0:"p-r",P1:"p-a",P2:"p-b",P3:"p-x"};
 const SC = {"Backlog":"p-x","In Progress":"p-a","Done":"p-g","Blocked":"p-r"};
 const TC = {"Feature":"p-b","Bug":"p-r","Improvement":"p-a"};
 
 const NAV = [
-  {id:"overview",icon:"[*]",label:"Overview"},
-  {id:"standup",icon:"[*][*]",label:"Daily Standup",count:2},
-  {id:"board",icon:"[*]",label:"Sprint Board"},
-  {id:"review",icon:"ok",label:"Review Queue",count:5},
-  {id:"planning",icon:"[*][*]",label:"Sprint Planning"},
-  {id:"retro",icon:"[*]",label:"Retrospective"},
-  {id:"backlog",icon:"[*]",label:"Product Backlog"},
-  {id:"flow",icon:"[*][*]",label:"Agent Loop"},
-  {id:"ai",icon:"[*]",label:"AI Assistant"},
+  {id:"overview",icon:"â¬",label:"Overview"},
+  {id:"standup",icon:"âï¸",label:"Daily Standup",count:2},
+  {id:"board",icon:"ð",label:"Sprint Board"},
+  {id:"review",icon:"â",label:"Review Queue",count:5},
+  {id:"planning",icon:"ðï¸",label:"Sprint Planning"},
+  {id:"retro",icon:"ð",label:"Retrospective"},
+  {id:"backlog",icon:"ð¦",label:"Product Backlog"},
+  {id:"flow",icon:"â»ï¸",label:"Agent Loop"},
+  {id:"ai",icon:"ð¤",label:"AI Assistant"},
 ];
 
 export default function App() {
@@ -254,6 +309,11 @@ export default function App() {
   const [aiIn,setAiIn]         = useState("");
   const [aiOut,setAiOut]       = useState("");
   const [aiRun,setAiRun]       = useState(false);
+  const [agents,setAgents]     = useState(AGENTS_DEFAULT);
+  const [feedsIn,setFeedsIn]   = useState(FEEDS_IN_DEFAULT);
+  const [feedsOut,setFeedsOut] = useState(FEEDS_OUT_DEFAULT);
+  const [showConfig,setShowConfig] = useState(false);
+  const [emojiEdit,setEmojiEdit]   = useState(null);
 
   const navigate = (id) => { setView(id); setMenuOpen(false); };
   const sprintItems = backlog.filter(b=>b.sprint===1);
@@ -266,6 +326,18 @@ export default function App() {
   const toggleSel = id => setSelected(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
   const commitSprint = () => { setBacklog(bl=>bl.map(b=>selected.includes(b.id)?{...b,sprint:2,status:"In Progress"}:b)); setSelected([]); };
 
+  // agent helpers
+  const toggleAgent = id => setAgents(a=>a.map(ag=>ag.id===id?{...ag,active:!ag.active}:ag));
+  const updateAgent = (id,field,val) => setAgents(a=>a.map(ag=>ag.id===id?{...ag,[field]:val}:ag));
+  const deleteAgent = id => setAgents(a=>a.filter(ag=>ag.id!==id));
+  const addAgent = () => {
+    const id = "agent-"+Date.now();
+    setAgents(a=>[...a,{id,name:"New Agent",emoji:"ð¤",active:true,desc:"Describe what this agent does"}]);
+  };
+  const updateFeed = (list,setList,i,val) => setList(l=>l.map((x,j)=>j===i?val:x));
+  const deleteFeed = (list,setList,i) => setList(l=>l.filter((_,j)=>j!==i));
+  const addFeed = (setList) => setList(l=>[...l,"New connection â destination"]);
+
   const runAI = async () => {
     setAiRun(true); setAiOut("");
     const sys = `You are the AI Scrum assistant for TradeStack. Sprint ${SPRINT.num}, Day ${SPRINT.dayElapsed}/${SPRINT.dayTotal}. ${SPRINT.dayTotal-SPRINT.dayElapsed} days left. Velocity: ${donePts}/${totalPts} pts. ${pendingRev} items pending review. ${blockers.length} active blockers. Be direct and tactical.`;
@@ -273,12 +345,6 @@ export default function App() {
     setAiOut(out); setAiRun(false);
   };
 
-  const FLOW_NODES = [
-    {e:"[*]",n:"Analytics",act:true},{arrow:"->"},{e:"[*]",n:"Research",act:true},{arrow:"->"},
-    {e:"[*]",n:"Outreach"},{arrow:"->"},{e:"[*]",n:"You (SM)",own:true},{arrow:"->"},
-    {e:"[*]",n:"Product"},{arrow:"->"},{e:"[*]",n:"Support"},{arrow:"[*]"},
-    {e:"[*][*]",n:"Strategy"},{arrow:"->"},{e:"[*]",n:"Finance"},
-  ];
 
   return (
     <>
@@ -287,9 +353,9 @@ export default function App() {
 
         {/* TOP BAR */}
         <div className="bar">
-          <button className="nav-toggle" onClick={()=>setMenuOpen(!menuOpen)}>[*]</button>
+          <button className="nav-toggle" onClick={()=>setMenuOpen(!menuOpen)}>â°</button>
           <div className="logo">Trade<b>Stack</b> <span style={{color:"#444",fontSize:".6rem",fontWeight:300}}>/ Admin</span></div>
-          <div className="sbadge"><div className="sdot"/>S{SPRINT.num} . Day {SPRINT.dayElapsed}/{SPRINT.dayTotal}</div>
+          <div className="sbadge"><div className="sdot"/>S{SPRINT.num} Â· Day {SPRINT.dayElapsed}/{SPRINT.dayTotal}</div>
         </div>
 
         {/* OVERLAY */}
@@ -315,7 +381,7 @@ export default function App() {
             {/* OVERVIEW */}
             {view==="overview"&&<>
               <div className="sh"><div className="st">Sprint {SPRINT.num} Overview</div><div className="sl"/></div>
-              <div className="ss">{SPRINT.start} -> {SPRINT.end} . You are Scrum Master</div>
+              <div className="ss">{SPRINT.start} â {SPRINT.end} Â· You are Scrum Master</div>
 
               <div className="g4" style={{marginBottom:"1rem"}}>
                 {[
@@ -335,7 +401,7 @@ export default function App() {
               <div className="card" style={{marginBottom:"1rem"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:".4rem"}}>
                   <span style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888"}}>Sprint Progress</span>
-                  <span style={{fontSize:".65rem",color:"#e07b39"}}>{pct}% elapsed . {Math.round((donePts/totalPts)*100)}% done</span>
+                  <span style={{fontSize:".65rem",color:"#e07b39"}}>{pct}% elapsed Â· {Math.round((donePts/totalPts)*100)}% done</span>
                 </div>
                 <div className="sbar-wrap"><div className="sbar-fill" style={{width:`${pct}%`}}/></div>
                 <div className="tick-row">
@@ -349,14 +415,14 @@ export default function App() {
                 <div className="card">
                   <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Today's Blockers</div>
                   {blockers.length===0
-                    ? <div style={{color:"#4ade80",fontSize:".7rem"}}>ok No blockers</div>
-                    : blockers.map((a,i)=><div key={i} className="blk-item">[*] <strong style={{color:"#f87171"}}>{a.name}:</strong> {a.blocker}</div>)}
+                    ? <div style={{color:"#4ade80",fontSize:".7rem"}}>â No blockers</div>
+                    : blockers.map((a,i)=><div key={i} className="blk-item">ð§ <strong style={{color:"#f87171"}}>{a.name}:</strong> {a.blocker}</div>)}
                 </div>
                 <div className="card">
                   <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Sprint Goals</div>
                   {sprintItems.map(t=>(
                     <div key={t.id} style={{display:"flex",alignItems:"flex-start",gap:".45rem",marginBottom:".35rem"}}>
-                      <span style={{fontSize:".7rem",flexShrink:0}}>{t.status==="Done"?"ok":t.status==="In Progress"?"[*]":"[*]"}</span>
+                      <span style={{fontSize:".7rem",flexShrink:0}}>{t.status==="Done"?"â":t.status==="In Progress"?"ð":"â¬"}</span>
                       <span style={{fontSize:".7rem",color:t.status==="Done"?"#4ade80":"#888",lineHeight:1.4}}>{t.title}</span>
                     </div>
                   ))}
@@ -369,7 +435,7 @@ export default function App() {
               <div className="sh"><div className="st">Daily Standup</div><div className="sl"/></div>
               <div className="ss">Each agent reports: what they did, doing, and what's blocking them</div>
               <div className="sdup-tabs">
-                {STANDUPS.map((s,i)=><button key={i} className={`sdup-tab ${sdDay===i?"on":""}`} onClick={()=>setSdDay(i)}>{s.date}</button>)}
+                {STANDUPS.map((s,i)=><button key={i} className={`sdup-tab ${seDay===i?"on":""}`} onClick={()=>setSdDay(i)}>{s.date}</button>)}
               </div>
               <div className="card">
                 {STANDUPS[sdDay].agents.map((a,i)=>(
@@ -379,7 +445,7 @@ export default function App() {
                     <div style={{flex:1,minWidth:0}}>
                       <div className="san">{a.name} Agent</div>
                       <div className="sau">{a.update}</div>
-                      {a.blocker&&<div className="sblk">[*] {a.blocker}</div>}
+                      {a.blocker&&<div className="sblk">ð§ {a.blocker}</div>}
                     </div>
                   </div>
                 ))}
@@ -389,7 +455,7 @@ export default function App() {
             {/* BOARD */}
             {view==="board"&&<>
               <div className="sh"><div className="st">Sprint Board</div><div className="sl"/></div>
-              <div className="ss">Sprint {SPRINT.num} - scroll right to see all columns</div>
+              <div className="ss">Sprint {SPRINT.num} â scroll right to see all columns</div>
               <div className="board-wrap">
                 <div className="board">
                   {["Backlog","In Progress","Review","Done"].map(col=>{
@@ -437,11 +503,11 @@ export default function App() {
                     <div className="ri-pre">{item.preview}</div>
                     <div className="ri-acts">
                       {!state||state==="Pending"
-                        ? <><button className="bapp" onClick={()=>setRstates(s=>({...s,[item.id]:"Approved"}))}>ok Approve</button>
-                            <button className="brej" onClick={()=>setRstates(s=>({...s,[item.id]:"Rejected"}))}>x Reject</button>
+                        ? <><button className="bapp" onClick={()=>setRstates(s=>({...s,[item.id]:"Approved"}))}>â Approve</button>
+                            <button className="brej" onClick={()=>setRstates(s=>({...s,[item.id]:"Rejected"}))}>â Reject</button>
                             <button className="bedt">Edit</button></>
                         : <span style={{fontSize:".65rem",color:state==="Approved"?"#4ade80":"#f87171"}}>
-                            {state==="Approved"?"ok Approved - queued for action":"x Rejected - returned to agent"}
+                            {state==="Approved"?"â Approved â queued for action":"â Rejected â returned to agent"}
                           </span>}
                     </div>
                   </div>
@@ -452,29 +518,29 @@ export default function App() {
             {/* PLANNING */}
             {view==="planning"&&<>
               <div className="sh"><div className="st">Sprint Planning</div><div className="sl"/></div>
-              <div className="ss">Select backlog items for Sprint 2. You set scope - agents execute.</div>
+              <div className="ss">Select backlog items for Sprint 2. You set scope â agents execute.</div>
               <div className="card" style={{marginBottom:"1rem"}}>
                 <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".25rem"}}>
-                  Sprint 2 . Selected: {selected.reduce((a,id)=>a+(backlog.find(b=>b.id===id)?.pts||0),0)} story points
+                  Sprint 2 Â· Selected: {selected.reduce((a,id)=>a+(backlog.find(b=>b.id===id)?.pts||0),0)} story points
                 </div>
                 <div style={{fontSize:".68rem",color:"#555"}}>Sprint 1 velocity: {donePts} pts. Match or go slightly under.</div>
               </div>
               {backlog.filter(b=>!b.sprint).sort((a,b)=>a.priority.localeCompare(b.priority)).map(item=>(
                 <div key={item.id} className={`pi ${selected.includes(item.id)?"sel":""}`} onClick={()=>toggleSel(item.id)}>
-                  <div className="pichk">{selected.includes(item.id)?"ok":""}</div>
+                  <div className="pichk">{selected.includes(item.id)?"â":""}</div>
                   <div className="pi-id">{item.id}</div>
                   <div className="pi-title">{item.title}</div>
                   <span className={`pill ${PC[item.priority]}`}>{item.priority}</span>
                   <div className="pi-pts">{item.pts}pt</div>
                 </div>
               ))}
-              {selected.length>0&&<button className="btn-run" style={{marginTop:".75rem"}} onClick={commitSprint}>Commit {selected.length} Items to Sprint 2 -></button>}
+              {selected.length>0&&<button className="btn-run" style={{marginTop:".75rem"}} onClick={commitSprint}>Commit {selected.length} Items to Sprint 2 â</button>}
             </>}
 
             {/* RETRO */}
             {view==="retro"&&<>
               <div className="sh"><div className="st">Retrospective</div><div className="sl"/></div>
-              <div className="ss">Sprint {SPRINT.num} reflection - what worked, what broke, what changes next sprint</div>
+              <div className="ss">Sprint {SPRINT.num} reflection â what worked, what broke, what changes next sprint</div>
               <div className="retro-grid">
                 {RETRO.map((col,i)=>(
                   <div key={i} className="rcol">
@@ -504,49 +570,141 @@ export default function App() {
             {/* AGENT LOOP */}
             {view==="flow"&&<>
               <div className="sh"><div className="st">Circular Agent Loop</div><div className="sl"/></div>
-              <div className="ss">Agents feed each other every sprint - nothing terminates, everything loops back into the backlog</div>
-              <div className="card">
+              <div className="ss">Agents feed each other every sprint â nothing terminates, everything loops back into the backlog</div>
+
+              {/* Visual flow diagram â dynamically from agents state */}
+              <div className="card" style={{marginBottom:".75rem"}}>
                 <div className="flow">
-                  {FLOW_NODES.map((n,i) =>
-                    n.arrow
-                      ? <div key={i} className="farrow">{n.arrow}</div>
-                      : <div key={i} className={`fn ${n.act?"act":""} ${n.own?"own":""}`}>
-                          <div className="fn-e">{n.e}</div>
-                          <div className="fn-n">{n.n}</div>
-                        </div>
-                  )}
+                  {agents.map((ag,i)=>[
+                    <div key={ag.id} className={`fn ${ag.active?"act":""}`} style={!ag.active?{opacity:.35}:{}}>
+                      <div className="fn-e">{ag.emoji}</div>
+                      <div className="fn-n">{ag.name}</div>
+                    </div>,
+                    i<agents.length-1&&<div key={ag.id+"-arr"} className="farrow">â</div>
+                  ])}
+                  {agents.length>1&&<div className="farrow">â©</div>}
+                  <div className="fn own"><div className="fn-e">ð§</div><div className="fn-n">You (SM)</div></div>
                 </div>
               </div>
-              <div className="g2" style={{marginTop:".75rem"}}>
+
+              {/* Configure toggle */}
+              <div className="ag-toggle">
+                <button className={`ag-toggle-btn ${showConfig?"active":""}`} onClick={()=>setShowConfig(s=>!s)}>
+                  {showConfig?"â² Hide Config":"â Configure Agents"}
+                </button>
+                {showConfig&&<span style={{fontSize:".62rem",color:"#555"}}>Click any field to edit Â· Changes update the loop above</span>}
+              </div>
+
+              {/* Config panel */}
+    /         {showConfig&&<>
+                <div className="card" style={{marginBottom:".75rem"}}>
+                  <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".75rem",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    Agents
+                    <span style={{fontSize:".6rem",color:"#444",fontFamily:"'Inconsolata',monospace",fontWeight:300}}>{agents.filter(a=>a.active).length} active Â· {agents.filter(a=>!a.active).length} inactive</span>
+                  </div>
+
+                  {agents.map(ag=>(
+                    <div key={ag.id} className={`ag-row ${!ag.active?"inactive":""}`}>
+                      {/* Emoji picker */}
+                      {emojiEdit===ag.id
+                        ? <input
+                            autoFocus
+                            style={{width:"2.5rem",fontSize:"1rem",background:"#1a1a1a",border:"1px solid #e07b39",borderRadius:"2px",color:"#ddd8ce",textAlign:"center",padding:".1rem"}}
+                            defaultValue={ag.emoji}
+                            onBlur={e=>{updateAgent(ag.id,"emoji",e.target.value.trim()||ag.emoji);setEmojiEdit(null);}}
+                            onKeyDown={e=>{if(e.key==="Enter"){updateAgent(ag.id,"emoji",e.target.value.trim()||ag.emoji);setEmojiEdit(null);}}}
+                          />
+                        : <button className="ag-emoji-btn" title="Click to change emoji" onClick={()=>setEmojiEdit(ag.id)}>{ag.emoji}</button>
+                      }
+
+                      {/* Name */}
+                      <input
+                        className="ag-name-input"
+                        value={ag.name}
+                        onChange={e=>updateAgent(ag.id,"name",e.target.value)}
+                        placeholder="Agent name"
+                      />
+
+                      {/* Description */}
+                      <input
+                        className="ag-desc-input"
+                        value={ag.desc}
+                        onChange={e=>updateAgent(ag.id,"desc",e.target.value)}
+                        placeholder="What does this agent do?"
+                      />
+
+                      {/* Active toggle */}
+                      <label className="ag-switch" title={ag.active?"Disable agent":"Enable agent"}>
+                        <input type="checkbox" checked={ag.active} onChange={()=>toggleAgent(ag.id)}/>
+                        <span className="ag-slider"/>
+                      </label>
+
+                      {/* Delete */}
+                      <button className="ag-del" title="Remove agent" onClick={()=>deleteAgent(ag.id)}>â</button>
+                    </div>
+                  ))}
+
+                  <button className="ag-add" onClick={addAgent}>+ Add Agent</button>
+                </div>
+
+                {/* Feeds In / Feeds Out editable lists */}
+                <div className="g2">
+                  <div className="card">
+                    <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Feeds INTO the loop</div>
+                    {feedsIn.map((item,i)=>(
+                      <div key={i} className="feed-item">
+                        <span style={{color:"#333",fontSize:".7rem",flexShrink:0}}>â</span>
+                        <input className="feed-input" value={item} onChange={e=>updateFeed(feedsIn,setFeedsIn,i,e.target.value)}/>
+                        <button className="feed-del" onClick={()=>deleteFeed(feedsIn,setFeedsIn,i)}>â</button>
+                      </div>
+                    ))}
+                    <button className="feed-add" onClick={()=>addFeed(setFeedsIn)}>+ Add input</button>
+                  </div>
+                  <div className="card">
+                    <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>Feeds OUT of the loop</div>
+                    {feedsOut.map((item,i)=>(
+                      <div key={i} className="feed-item">
+                        <span style={{color:"#333",fontSize:".7rem",flexShrink:0}}>â</span>
+                        <input className="feed-input" value={item} onChange={e=>updateFeed(feedsOut,setFeedsOut,i,e.target.value)}/>
+                        <button className="feed-del" onClick={()=>deleteFeed(feedsOut,setFeedsOut,i)}>â</button>
+                      </div>
+                    ))}
+                    <button className="feed-add" onClick={()=>addFeed(setFeedsOut)}>+ Add output</button>
+                  </div>
+                </div>
+              </>}
+
+              {/* Read-only feeds when config is hidden */}
+              {!showConfig&&<div className="g2">
                 {[
-                  {title:"Feeds INTO the loop",items:["User feedback -> Support -> Product -> Backlog","Market changes -> Research -> Backlog + Outreach queue","User financials -> Finance -> Strategy -> Dashboard updates","Platform metrics -> Analytics -> Your daily standup"]},
-                  {title:"Feeds OUT of the loop",items:["Approved outreach emails -> sent to prospects","Approved feature specs -> Sprint backlog -> Development","Approved financial alerts -> user dashboard","Approved intel -> competitor tabs refresh"]},
+                  {title:"Feeds INTO the loop",items:feedsIn},
+                  {title:"Feeds OUT of the loop",items:feedsOut},
                 ].map((col,i)=>(
                   <div key={i} className="card">
                     <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".65rem"}}>{col.title}</div>
-                    {col.items.map((it,j)=><div key={j} style={{display:"flex",gap:".4rem",fontSize:".7rem",color:"#777",lineHeight:1.55,marginBottom:".3rem"}}><span style={{color:"#333"}}>-></span>{it}</div>)}
+                    {col.items.map((it,j)=><div key={j} style={{display:"flex",gap:".4rem",fontSize:".7rem",color:"#777",lineHeight:1.55,marginBottom:".3rem"}}><span style={{color:"#333"}}>â</span>{it}</div>)}
                   </div>
                 ))}
-              </div>
+              </div>}
             </>}
 
             {/* AI ASSISTANT */}
             {view==="ai"&&<>
               <div className="sh"><div className="st">AI Scrum Assistant</div><div className="sl"/></div>
-              <div className="ss">Ask anything about sprint health, priorities, or process. You are Scrum Master - this is your advisor.</div>
+              <div className="ss">Ask anything about sprint health, priorities, or process. You are Scrum Master â this is your advisor.</div>
               <div className="card" style={{marginBottom:".75rem"}}>
                 <div style={{fontFamily:"'Archivo',sans-serif",fontWeight:700,fontSize:".72rem",color:"#888",marginBottom:".5rem"}}>Sprint Context (auto-loaded)</div>
                 <div style={{fontSize:".68rem",color:"#555",lineHeight:1.8}}>
-                  Sprint {SPRINT.num} . Day {SPRINT.dayElapsed}/{SPRINT.dayTotal} . {SPRINT.dayTotal-SPRINT.dayElapsed}d left<br/>
-                  Velocity: {donePts}/{totalPts} pts . {sprintItems.filter(b=>b.status==="Done").length}/{sprintItems.length} tickets done<br/>
-                  Review queue: {pendingRev} pending . Blockers: {blockers.length} active
+                  Sprint {SPRINT.num} Â· Day {SPRINT.dayElapsed}/{SPRINT.dayTotal} Â· {SPRINT.dayTotal-SPRINT.dayElapsed}d left<br/>
+                  Velocity: {donePts}/{totalPts} pts Â· {sprintItems.filter(b=>b.status==="Done").length}/{sprintItems.length} tickets done<br/>
+                  Review queue: {pendingRev} pending Â· Blockers: {blockers.length} active
                 </div>
               </div>
-              <textarea className="ai-in" placeholder={"Examples:\n. What should I handle first in my review queue?\n. Can we still hit sprint goals with time left?\n. How should I structure Sprint 2?\n. The competitor tab is causing churn - fastest fix?"} value={aiIn} onChange={e=>setAiIn(e.target.value)}/>
+              <textarea className="ai-in" placeholder={"Examples:\nâ¢ What should I handle first in my review queue?\nâ¢ Can we still hit sprint goals with time left?\nâ¢ How should I structure Sprint 2?\nâ¢ The competitor tab is causing churn â fastest fix?"} value={aiIn} onChange={e=>setAiIn(e.target.value)}/>
               <div style={{display:"flex",justifyContent:"flex-end",marginTop:".5rem"}}>
-                <button className="btn-run" disabled={aiRun||!aiIn.trim()} onClick={runAI}>{aiRun?"Thinking...":"[*] Ask Assistant"}</button>
+                <button className="btn-run" disabled={aiRun||!aiIn.trim()} onClick={runAI}>{aiRun?"Thinkingâ¦":"â¶ Ask Assistant"}</button>
               </div>
-              {(aiRun||aiOut)&&<div className="ai-out">{aiRun?<span style={{color:"#e07b39"}}>Processing...</span>:aiOut}</div>}
+              {(aiRun||aiOut)&&<div className="ai-out">{aiRun?<span style={{color:"#e07b39"}}>Processingâ¦</span>:aiOut}</div>}
             </>}
 
           </div>
